@@ -310,3 +310,15 @@ From: https://www.zhihu.com/question/27862634/answer/208895189
 - [alignas](https://stackoverflow.com/questions/17091382/memory-alignment-how-to-use-alignof-alignas)
 
 From: https://www.zhihu.com/question/470670449/answer/1984399361
+
+## 如何理解 C++11 的六种 memory order？(To Be Studied)
+From: https://www.zhihu.com/question/24301047/answer/83422523
+From: https://zhuanlan.zhihu.com/p/464207968
+
+## C++ Reflection
+From: https://www.zhihu.com/question/361153307/answer/1518952318
+From: https://en.cppreference.com/w/cpp/keyword/reflexpr
+From: https://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful
+
+## Extern "C"
+From: https://zhuanlan.zhihu.com/p/430687729
