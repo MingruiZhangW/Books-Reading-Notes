@@ -3,7 +3,7 @@
 ## RAII-Resource Acquisition Is Initialization
 > ```资源获取即初始化 (简称 RAII)``` 是C++防止内存泄露一个很好解决方案，它结合构造函数和析构函数，把资源生命周期和对象生命周期绑定起来，在构造函数中获取资源（这些错误会引发异常），然后将其释放到析构函数中（永不抛出），并且不需要显式清理，从而防止忘记释放资源；
 
-<img src=" https://pic1.zhimg.com/80/v2-ef568ed7934fe99d83d81b917fcc79a8_720w.jpg" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+<img src="https://pic1.zhimg.com/80/v2-ef568ed7934fe99d83d81b917fcc79a8_720w.jpg" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
 
 > C ++STL库很多类遵循RAII设计原则，比如std :: string，std :: vector，std :: thread等。
 
