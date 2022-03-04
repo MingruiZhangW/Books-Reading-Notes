@@ -1,6 +1,6 @@
 # C++ Advanced Knowledge
 
-## 1. [CPU Branch Predictor](http://matt33.com/2020/04/16/cpu-branch-predictor/) (To Be Studied)
+## **[CPU Branch Predictor](http://matt33.com/2020/04/16/cpu-branch-predictor/) (To Be Studied)**
 
 > ***if-else*** 涉及到分支预测的概念。首先看一段经典的代码，并统计它的执行时间: 
 ```
@@ -68,7 +68,7 @@ sum = 480124300000
 
 From: https://www.zhihu.com/question/441518636/answer/1701252133
 
-## 2. Usage of Macro (To Be Studied)
+## **Usage of Macro (To Be Studied)**
 
 > inline 无法代替宏的地方：
 1. 循环展开：
@@ -187,9 +187,9 @@ From: https://www.zhihu.com/question/441518636/answer/1701252133
 
 From: https://www.zhihu.com/question/30659549/answer/49956788
 
-## 3. [构建C/C++良好的工程结构](https://zhuanlan.zhihu.com/p/59450618) (To Be Studied)
+## **[构建C/C++良好的工程结构](https://zhuanlan.zhihu.com/p/59450618) (To Be Studied)**
 
-## 4. 内存对齐 (To Be Studied)
+## **内存对齐 (To Be Studied)**
 
 > 字节对齐主要是为了提高内存的访问效率，比如intel 32位cpu，每个总线周期都是从偶地址开始读取32位的内存数据，如果数据存放地址不是从偶数开始，则可能出现需要两个总线周期才能读取到想要的数据，因此需要在内存中存放数据时进行对齐。
 
@@ -232,7 +232,7 @@ From: https://www.zhihu.com/question/30659549/answer/49956788
 
 From: https://www.zhihu.com/question/27862634/answer/208895189
 
-### ***New*** Operator Overloading and std::allocator (To Be Studied)
+### **```New``` Operator Overloading and std::allocator (To Be Studied)**
 
 1. 对齐版本的 operator new 重载 
 ```
@@ -311,20 +311,20 @@ From: https://www.zhihu.com/question/27862634/answer/208895189
 
 From: https://www.zhihu.com/question/470670449/answer/1984399361
 
-## 如何理解 C++11 的六种 memory order and std::atomic？(To Be Studied)
+## **如何理解 C++11 的六种 memory order and std::atomic？(To Be Studied)**
 From: https://www.zhihu.com/question/24301047/answer/83422523
 From: https://zhuanlan.zhihu.com/p/464207968
 From: https://stackoverflow.com/questions/31978324/what-exactly-is-stdatomic
 
-## C++ Reflection (To Be Studied)
+## **C++ Reflection (To Be Studied)**
 From: https://www.zhihu.com/question/361153307/answer/1518952318
 From: https://en.cppreference.com/w/cpp/keyword/reflexpr
 From: https://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful
 
-## Extern "C" (To Be Studied)
+## **Extern "C" (To Be Studied)**
 From: https://zhuanlan.zhihu.com/p/430687729
 
-## Mutex && Condition Variable && read-write lock && Spinlock (To Be Studied)
+## **Mutex && Condition Variable && read-write lock && Spinlock (To Be Studied)**
 
 > 我们都听说过加锁 **(lock)** 或者解锁 **(unlock)**，当然学术一点地说法是获取 **(acquire)** 和释放 **(release)**。
 
@@ -332,7 +332,7 @@ From: https://zhuanlan.zhihu.com/p/430687729
 
 > 恰好```pthread```包含这几种锁的API，而C++11只包含其中的部分。接下来我将通过```pthread```的API来展开回答
 
-### Mutex
+### **Mutex**
 
 > ```mutex``` (互斥量) (mutual exclusive) 即互斥量（互斥体）。也便是常说的互斥锁。尽管名称不含lock，但是称之为锁，也是没有太大问题的。mutex无疑是最常见的多线程同步方式。其思想简单粗暴，多线程共享一个互斥量，然后线程之间去竞争。得到锁的线程可以进入临界区执行代码
 
@@ -385,7 +385,7 @@ From: https://zhuanlan.zhihu.com/p/430687729
 
 > 然而对于```递归互斥量```或者说```可重入锁```的使用则需要克制。Stevens大神生前在《APUE》中说『使用好它是十分tricky的，仅当没有其他解决方案时才使用』[1]。可重入锁这个概念和称呼的走俏多半是Java语言的功劳。
 
-### Condition Variable
+### **Condition Variable**
 > ```condition variable``` (条件变量) 请注意条件变量不是锁，它是一种线程间的通讯机制，并且几乎总是和互斥量一起使用的。所以互斥量和条件变量二者一般是成套出现的。比如C++11中也有条件变量的API：```std::condition_variable```。对于pthread：
 ```
     // 声明一个互斥量     
@@ -509,7 +509,7 @@ From: https://zhuanlan.zhihu.com/p/430687729
 - [**Spurious wakeup**](https://en.wikipedia.org/wiki/Spurious_wakeup): It may happen that the receiver wakes up, although no notification happened. ```At a minimum POSIX Threads and the Windows API can be victims of these phenomena```. Another case is: in between the time when the condition variable was signaled and when the waiting thread finally ran, another thread ran and changed the condition. There was a race condition between the threads, with the typical result that sometimes, the thread waking up on the condition variable runs first, winning the race, and sometimes it runs second, losing the race
 - To become ***not the victim of these two issues***, you have to use an additional predicate as memory; or as the rule state it an additional condition.
 
-#### To summrize:
+#### **To summrize:**
 
 > In the initial processing of wait, the thread locks the mutex and then checks the predicate ```[]{ return dataReady; }```.
 
@@ -576,7 +576,7 @@ From: https://zhuanlan.zhihu.com/p/430687729
 - 多读单写的KV。可以使用双缓冲（double buffer）的数据结构来实现。double buffer同名的概念比较多，这里指的是foreground 和 backgroud 两个buffer进行切换的『0 - 1切换』技术。比如实现动态加载（热加载）配置文件的时候。可能会在切换间隙加一个短暂的互斥量，但是基本可以认为是lock free的。
 - 无非也就是空间换时间的老套路了。
 
-### Spinlock
+### **Spinlock**
 > ```spinlock```（自旋锁）自旋之名颇为玄妙，第一次听闻常让人略觉高大。但和无数个好似『故意把简单概念复杂化』的计算机术语一样，自旋锁的本质简单的难以置信。
 > 要了解自旋锁，首先了解自旋。**什么是自旋（spin）呢？更为通俗的一个词是『忙等待』（busy waiting）。最最通俗的一个理解，其实就是死循环……。** 
 
@@ -621,7 +621,7 @@ int pthread_spin_init (pthread_spinlock_t *lock, int pshared) {
 
 From: https://www.zhihu.com/question/66733477/answer/1267625567
 
-## STL容器是否是线程安全的?  (To Be Studied)
+## **STL容器是否是线程安全的?  (To Be Studied)**
 
 > 一般说来，stl对于多线程的支持仅限于下列两点: 
 
@@ -656,7 +656,7 @@ From: https://www.zhihu.com/question/66733477/answer/1267625567
 From: https://www.cnblogs.com/ztteng/p/3411738.html <br/>
 From: https://www.zhihu.com/question/29987589/answer/1483744520
 
-## C++ VTable (虚表) (To Be Studied)
+## **C++ VTable (虚表) (To Be Studied)**
 
 From: https://www.zhihu.com/question/389546003/answer/1194780618 <br/>
 From: https://www.zhihu.com/question/29251261/answer/1297439131
