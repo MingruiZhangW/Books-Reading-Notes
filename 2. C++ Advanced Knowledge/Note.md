@@ -1,6 +1,6 @@
 # C++ Advanced Knowledge
 
-## **[CPU Branch Predictor](http://matt33.com/2020/04/16/cpu-branch-predictor/) (To Be Studied)**
+## **[CPU Branch Predictor](http://matt33.com/2020/04/16/cpu-branch-predictor/)**
 
 > ***if-else*** 涉及到分支预测的概念。首先看一段经典的代码，并统计它的执行时间: 
 ```
@@ -68,7 +68,7 @@ sum = 480124300000
 
 From: https://www.zhihu.com/question/441518636/answer/1701252133
 
-## **Usage of Macro (To Be Studied)**
+## **Usage of Macro**
 
 > inline 无法代替宏的地方：
 1. 循环展开：
@@ -187,9 +187,9 @@ From: https://www.zhihu.com/question/441518636/answer/1701252133
 
 From: https://www.zhihu.com/question/30659549/answer/49956788
 
-## **[构建C/C++良好的工程结构](https://zhuanlan.zhihu.com/p/59450618) (To Be Studied)**
+## **[构建C/C++良好的工程结构](https://zhuanlan.zhihu.com/p/59450618)**
 
-## **内存对齐 (To Be Studied)**
+## **内存对齐**
 
 > 字节对齐主要是为了提高内存的访问效率，比如intel 32位cpu，每个总线周期都是从偶地址开始读取32位的内存数据，如果数据存放地址不是从偶数开始，则可能出现需要两个总线周期才能读取到想要的数据，因此需要在内存中存放数据时进行对齐。
 
@@ -232,7 +232,7 @@ From: https://www.zhihu.com/question/30659549/answer/49956788
 
 From: https://www.zhihu.com/question/27862634/answer/208895189
 
-### **```New``` Operator Overloading and std::allocator (To Be Studied)**
+### **```New``` Operator Overloading and std::allocator**
 
 1. 对齐版本的 operator new 重载 
 ```
@@ -311,20 +311,20 @@ From: https://www.zhihu.com/question/27862634/answer/208895189
 
 From: https://www.zhihu.com/question/470670449/answer/1984399361
 
-## **如何理解 C++11 的六种 memory order and std::atomic？(To Be Studied)**
+## **如何理解 C++11 的六种 memory order and std::atomic?**
 From: https://www.zhihu.com/question/24301047/answer/83422523
 From: https://zhuanlan.zhihu.com/p/464207968
 From: https://stackoverflow.com/questions/31978324/what-exactly-is-stdatomic
 
-## **C++ Reflection (To Be Studied)**
+## **C++ Reflection**
 From: https://www.zhihu.com/question/361153307/answer/1518952318
 From: https://en.cppreference.com/w/cpp/keyword/reflexpr
 From: https://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful
 
-## **Extern "C" (To Be Studied)**
+## **Extern "C"**
 From: https://zhuanlan.zhihu.com/p/430687729
 
-## **Mutex && Condition Variable && read-write lock && Spinlock (To Be Studied)**
+## **Mutex && Condition Variable && read-write lock && Spinlock**
 
 > 我们都听说过加锁 **(lock)** 或者解锁 **(unlock)**，当然学术一点地说法是获取 **(acquire)** 和释放 **(release)**。
 
@@ -621,7 +621,7 @@ int pthread_spin_init (pthread_spinlock_t *lock, int pshared) {
 
 From: https://www.zhihu.com/question/66733477/answer/1267625567
 
-## **STL容器是否是线程安全的?  (To Be Studied)**
+## **STL容器是否是线程安全的? **
 
 > 一般说来，stl对于多线程的支持仅限于下列两点: 
 
@@ -656,7 +656,7 @@ From: https://www.zhihu.com/question/66733477/answer/1267625567
 From: https://www.cnblogs.com/ztteng/p/3411738.html <br/>
 From: https://www.zhihu.com/question/29987589/answer/1483744520
 
-## **C++ VTable (虚表) (To Be Studied)**
+## **C++ VTable (虚表)**
 
 From: https://www.zhihu.com/question/389546003/answer/1194780618 <br/>
 From: https://www.zhihu.com/question/29251261/answer/1297439131
