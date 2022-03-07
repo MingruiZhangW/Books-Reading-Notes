@@ -17,3 +17,15 @@ From: https://zhuanlan.zhihu.com/p/91582909
 
 ## **LeetCode**
 From: https://github.com/youngyangyang04/leetcode-master
+
+## **Shell Sort**
+
+From: https://mp.weixin.qq.com/s/b9-dkpAhWJYshuSs5cwnOw
+
+## **Binary**
+
+From: https://mp.weixin.qq.com/s/Cd4uRslnek8r_a6chjwnYQ
+
+## **KMP**
+
+From: https://mp.weixin.qq.com/s/3gYbmAAFh08BQmT-9quItQ

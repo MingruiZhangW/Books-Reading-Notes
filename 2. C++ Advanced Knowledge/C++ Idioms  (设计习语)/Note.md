@@ -41,3 +41,7 @@
 > 这样做的目的是在基类中使用派生类。从基础对象的角度来看，派生对象本身就是对象，但是是向下转换的对象。因此，基类可以通过将```static_cast```自身放入派生类来访问派生类.
 
 From: https://zhuanlan.zhihu.com/p/459417765
+
+## **职责连模式**
+
+From: https://mp.weixin.qq.com/s/oP3GOPbjg5wHcgtizExThw

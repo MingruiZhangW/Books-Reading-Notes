@@ -191,3 +191,7 @@ From: https://mp.weixin.qq.com/s/k2zD3AlUgZPLEcDDYAsLXw
 > 有时候程序在```Debug```模式下运行的好好的，```Release```模式下就*crash*了，怎么办？看一下代码中是否有未初始化的变量，是否有数组越界问题，从这个思路入手。有些时候程序在```Debug```模式下会崩溃，```Release```模式下却正常运行，怎么办？可以尝试着找一找代码中的assert，看一下是否是assert导致的两种模式下的差异，从这个思路入手。
 
 From：https://www.zhihu.com/question/443340911/answer/1720297063
+
+## **Jenkins vs Bamboo**
+
+From: https://mp.weixin.qq.com/s/u0BPUhgLUBHcz-iTbVhstw

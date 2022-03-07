@@ -1,5 +1,9 @@
 # NetWork Programming Knowledge
 
+## **基础Flow**
+
+From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
+
 ## **从单个服务器扩展到百万用户的系统**
 
 > 你开发了一个网站（例如网上商店、社交网站或者其他任何东西），之后你把它发布到了网上，网站运行良好，每天有几百的访问量，能快速地相响应用户的请求。
@@ -171,3 +175,41 @@
 > 但是,并不是说你使用了云服务以后(如 Amazon Web Service Lambda)，所有的问题都解决了,它随之而来的是一系列挑战和权衡。
 
 From: https://mp.weixin.qq.com/s/wSCeO8QVYniMIGcBFDZyjw
+
+## **Serverless**
+
+From: https://mp.weixin.qq.com/s/Kv0L83E_wj3be5DTt2LfZA
+
+## **Kafka**
+
+From: https://mp.weixin.qq.com/s/ghFDVMCacgYuTcG5klxTiw
+
+## **分布式系统的负载均衡**
+
+From: https://mp.weixin.qq.com/s/H3nj_6mR1XCyi6uBboVIhA <br/>
+From: https://mp.weixin.qq.com/s/kD95oe03-EDBIOx7KLehdA
+
+## **HTTP && HTTPS && HTTP/2 && HTTP/3**
+
+From: https://mp.weixin.qq.com/s/n8HBG9LuzQjOT__M4pxKwA <br/>
+From: https://stackoverflow.com/questions/53488601/what-is-difference-between-https-and-http-2 <br/>
+From: https://mp.weixin.qq.com/s/TU36OLc5pE-vbsEo0aHZGA <br/>
+From: https://mp.weixin.qq.com/s/zNC6qnW3DXD6B8eHlL1tjw <br/>
+From: https://www.codenong.com/cs107123938/
+
+## **DNS**
+
+From: https://mp.weixin.qq.com/s/JQE4iIFy5I4bDtAegZULWg
+
+## **TCP in Details**
+
+From: https://mp.weixin.qq.com/s/h89R86KhWiQKsBvfZpyF5Q
+
+## **IO 多路复用**
+
+From: https://mp.weixin.qq.com/s/3gC-nUnFGv-eoSBsEdSZuA <br/>
+From: https://mp.weixin.qq.com/s/OmRdUgO1guMX76EdZn11UQ
+
+## **中断**
+
+From：https://mp.weixin.qq.com/s/bTfeI5p4eO5j6I9edeV73g
