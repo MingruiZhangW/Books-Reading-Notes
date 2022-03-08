@@ -62,7 +62,8 @@ sum = 480124300000
 ```
 
 > 其实Linux中有一些工具可以检测出分支预测成功的次数，有***valgrind***和***perf***，使用方式如图：
-<img src="https://pic2.zhimg.com/50/v2-22f81e01c5c1c479ed3a9bb4514139e5_720w.jpg?source=1940ef5c" data-size="normal" data-rawwidth="647" data-rawheight="621" data-default-watermark-src="https://pica.zhimg.com/50/v2-8cbe7244eed88038ffaa6a5e63314228_720w.jpg?source=1940ef5c" class="origin_image zh-lightbox-thumb" width="647" data-original="https://pic1.zhimg.com/v2-22f81e01c5c1c479ed3a9bb4514139e5_r.jpg?source=1940ef5c"/>
+
+![Alt text](/resources/img/c++_advanced_knowledge_note/cpu_branch_predictor_1.jpg)
 
 > 条件分支的使用会影响程序执行的效率，我们平时开发过程中应该尽可能减少在程序中随意使用过多的分支，能避免则避免。
 
@@ -328,7 +329,7 @@ From: https://zhuanlan.zhihu.com/p/430687729
 
 > 我们都听说过加锁 **(lock)** 或者解锁 **(unlock)**，当然学术一点地说法是获取 **(acquire)** 和释放 **(release)**。
 
-<img src="https://pica.zhimg.com/50/v2-b41c6cfeb6bfdb84480e7f9fc0c4761b_720w.jpg?source=1940ef5c" data-caption="" data-size="normal" data-rawwidth="998" data-rawheight="262" data-default-watermark-src="https://pic2.zhimg.com/50/v2-36cf247f90fa702e670b92ea8bbeb5aa_720w.jpg?source=1940ef5c" class="origin_image zh-lightbox-thumb" width="998" data-original="https://pic2.zhimg.com/v2-b41c6cfeb6bfdb84480e7f9fc0c4761b_r.jpg?source=1940ef5c"/>
+![Alt text](/resources/img/c++_advanced_knowledge_note/mutex_condition_variable_read-write_lock_spinlock_1.png)
 
 > 恰好```pthread```包含这几种锁的API，而C++11只包含其中的部分。接下来我将通过```pthread```的API来展开回答
 

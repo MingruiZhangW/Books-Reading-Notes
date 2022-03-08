@@ -14,7 +14,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 > 对你来讲，这是个好消息，但是对你的Web应用来说这是个坏消息。因为现在它需要扩展了，你的应用需要为全球用户提供7*24不宕机服务。
 
-## **如何进行扩展?**
+### **如何进行扩展?**
 
 > 几年前，我讨论过*水平扩展与垂直扩展*。简而言之, *垂直扩展*意味着在性能更强的计算机上运行同样的服务，而*水平扩展*是并行地运行多个服务。
 
@@ -28,7 +28,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **1. 单台服务器 + 数据库**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYYmmScgKpn40UabB6hjNwia2MOktVCCcQycvLicIvLD0Yia8YbO325hPSA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_1.jfif)
 
 > 上图可能是你后端服务最初的样子。有一个执行业务逻辑的应用服务器```（Application Server）```和保存数据的数据库。
 
@@ -36,7 +36,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **2. 增加一个反向代理**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYAsO5PzD2gGjkfPTibnQficEyuVnvIbwjXDB19GgDWxqaZeV5uXIhUMjw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_2.jfif)
 
 > 成为大规模服务架构的第一步是添加反向代理。类似于酒店大堂的接待处。你也可以让客人直接去他们的客房。但是实际上，你需要一个中间人他去检查是否允许客人进入， 如果客房没有开放，得有人告诉客人，而不是让客人处于尴尬的境地。这些事情正是反向代理需要做的。
 
@@ -49,7 +49,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **3. 引入负载均衡器**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYrymibWa01ZyzwcB8VSvYiapEfCRK8sPkiaEZRyO5UQEXib8ZIJy6wUA5YA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_3.jfif)
 
 > 大多数反向代理还有另外一个功能：他们也可以充当负载均衡器。
 
@@ -63,7 +63,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **4. 扩展数据库**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYNIoeNia7g5owz7owfKsE8oyUpbgW9HzbATGSOqOrrcwO6VTUpkK1omA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_4.jfif)
 
 > 负载均衡器的使用使得我们可以在多个服务器之间分配负载。但是你发现问题了吗？尽管我们可以用成百上千台服务器处理请求，但是他们都是用同一个数据库存储和检索数据。
 
@@ -79,7 +79,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **5. 微服务**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxY5rnUothfCBdwD7iaqlA51PqxCEzJ2KV2ocQZODKc3qxE8q9TQXkIEcA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_5.jfif)
 
 > 到目前为止，我们的付款、订单、库存、用户管理等等这些功能都在一台服务器上。
 
@@ -101,7 +101,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **6. 缓存和内容分发网络(CDN)**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYDzxgvVT8nYibkfEMqFg1icoOmuROKqgghiaBTBsOxGg9ibpZK6rZTqibXhg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_6.jfif)
 
 > 有什么方式能使服务更高效? 网络应用的很大一部由静态资源构成,如图片、CSS样式文件、JavaScript脚本以及一些针对特定产品提前渲染好的页面等等。
 
@@ -119,7 +119,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **7. 消息队列**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYE8NIBCniakGTCsbehJtmcLu12Bk8xtOhrQEO52gzNrUSsT9paDrWl7w/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_7.jfif)
 
 > 你去过游乐园吗？你是否走到售票柜台去买票？也许不是这样，可能是排队等候。政府机构、邮局、游乐园入口都属于并行概念的例子，多个售票亭同时售票，但似乎也永远不足以为每个人立即服务，于是队列形成了。
 
@@ -140,7 +140,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **8. 分片，分片，还是分片**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYJbkHQ7eNSvALhshtLXMGZcWymo5xdZm0LJvWdgPibTgY7Kgl3D0OFZw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_8.jfif)
 
 > 什么是分片？好吧，深呼吸一下，准备好了吗？我们看下定义：
 
@@ -156,7 +156,7 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ### **9. 对负载均衡器进行负载均衡**
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/KyXfCrME6UKULeBHo2NnpbOE7ribMyxxYLtutxvffdTLd9RYXuHUb18VQcJYla0saqFXt4BTdicNSImNqsCDuwZw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" data-size="normal" data-rawwidth="647" data-rawheight="621"/>
+![Alt text](/resources/img/network_programming_note/web_system_expand_9.jfif)
 
 > 到目前为止，我们一直使用一个负载均衡器，即使你购买的一些功能强悍(且其价格极其昂贵)的硬件负载均衡器，但是他们可以处理的请求量也存在硬件限制。
 
