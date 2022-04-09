@@ -1,9 +1,5 @@
 # NetWork Programming Knowledge
 
-## **计算机网络文章话题**
-
-From: https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0ODk2NDIyMQ==&action=getalbum&album_id=1629017939758596097&subscene=159&subscene=189&scenenote=https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI0ODk2NDIyMQ%3D%3D%26mid%3D2247487683%26idx%3D1%26sn%3De0949e72e039759545450852d8bc0ada%26chksm%3De999e5d1deee6cc7ab9e42b50329924fee39c45955516b406046605d27928825a0f628d13e7c%26cur_album_id%3D1629017939758596097%26scene%3D189%23wechat_redirect&nolastread=1#wechat_redirect
-
 ## **基础Flow**
 
 <p align="center" style="color: rgb(2, 30, 170);letter-spacing: 0px;">
@@ -556,6 +552,10 @@ From: https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0ODk2NDIyMQ==&action=geta
 
 From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
+## **TCP in Details**
+
+From: https://mp.weixin.qq.com/s/h89R86KhWiQKsBvfZpyF5Q
+
 ## **从单个服务器扩展到百万用户的系统**
 
 > 你开发了一个网站（例如网上商店、社交网站或者其他任何东西），之后你把它发布到了网上，网站运行良好，每天有几百的访问量，能快速地相响应用户的请求。
@@ -753,14 +753,11 @@ From: https://www.codenong.com/cs107123938/
 
 From: https://mp.weixin.qq.com/s/JQE4iIFy5I4bDtAegZULWg
 
-## **TCP in Details**
-
-From: https://mp.weixin.qq.com/s/h89R86KhWiQKsBvfZpyF5Q
-
-## **IO 多路复用**
+## **IO 多路复用** && **同步阻塞网络 IO**
 
 From: https://mp.weixin.qq.com/s/3gC-nUnFGv-eoSBsEdSZuA <br/>
-From: https://mp.weixin.qq.com/s/OmRdUgO1guMX76EdZn11UQ
+From: https://mp.weixin.qq.com/s/OmRdUgO1guMX76EdZn11UQ <br/>
+From: https://mp.weixin.qq.com/s/cIcw0S-Q8pBl1-WYN0UwnA
 
 ## **中断**
 
@@ -769,3 +766,9 @@ From：https://mp.weixin.qq.com/s/bTfeI5p4eO5j6I9edeV73g
 ## **编码、Unicode，Emoji**
 
 From: https://mp.weixin.qq.com/s/gP8QPzTROGHpKreWf7lUMg
+
+## **计算机网络文章话题**
+
+From: https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0ODk2NDIyMQ==&action=getalbum&album_id=1629017939758596097&subscene=159&subscene=189&scenenote=https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzI0ODk2NDIyMQ%3D%3D%26mid%3D2247487683%26idx%3D1%26sn%3De0949e72e039759545450852d8bc0ada%26chksm%3De999e5d1deee6cc7ab9e42b50329924fee39c45955516b406046605d27928825a0f628d13e7c%26cur_album_id%3D1629017939758596097%26scene%3D189%23wechat_redirect&nolastread=1#wechat_redirect <br/>
+
+From: https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MjM5Njg5NDgwNA==&action=getalbum&album_id=1532487451997454337&scene=173&from_msgid=2247484905&from_itemidx=1&count=3&nolastread=1#wechat_redirect
