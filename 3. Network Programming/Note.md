@@ -814,7 +814,7 @@ From: https://www.codenong.com/cs107123938/
 ```
 
 <p align="center">
-  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/dns_1.png?raw=true" />
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/dns_1.jpg?raw=true" />
 </p>
 
 细心的人会问，在第1步中，*LDNS问根DNS的时候，他是怎么知道根DNS的IP的？*
