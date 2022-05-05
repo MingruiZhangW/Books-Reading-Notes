@@ -440,3 +440,67 @@
 - ```Application-level gateway (ALG)``` is a component of a firewall or NAT that allows for configuring NAT traversal filters. It is claimed by numerous people that this technique creates more problems than it solves.
 
 > One solution for NAT traversal, called the ```Internet Gateway Device Protocol (IGD Protocol)```, is ***implemented via UPnP***. Many routers and firewalls expose themselves as Internet Gateway Devices, allowing any local UPnP control point to perform a variety of actions, including retrieving the external IP address of the device, enumerating existing port mappings, and adding or removing port mappings. By adding a port mapping, a UPnP controller behind the IGD can enable traversal of the IGD from an external address to an internal client.
+
+### **IP Tunnel** - page. 200
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/81.png?raw=true" />
+</p>
+
+### **IP AnyCast**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/82.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/83.png?raw=true" />
+</p>
+
+- [911](https://en.wikipedia.org/wiki/Enhanced_9-1-1#Wireless_routing])
+
+### **Mobile IP** - page. 207
+
+## 6. TCP and UDP
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/84.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/85.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/86.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/87.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/88.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/89.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/90.png?raw=true" />
+</p>
+
+### **UDP**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/91.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/92.png?raw=true" />
+</p>
+
+### **TCP**
+
+- [Note from another source](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/Note.md#dns)

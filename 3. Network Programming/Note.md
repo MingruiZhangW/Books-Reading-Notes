@@ -554,6 +554,60 @@ From：https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg
 
 ## **TCP in Details**
 
+经过《[你管这破玩意儿叫网络？](https://mp.weixin.qq.com/s/rGX7jTHLrXg4Qikls_deDg)》这篇文章中的一番折腾，只要你知道另一位伙伴 **B** 的 **IP** 地址，且你们之间的网络是通的，无论多远，你都可以将一个数据包发送给你的伙伴 **B**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/basic_flow_31.png?raw=true" />
+</p>
+
+这就是物理层、数据链路层、网络层这三层所做的事情。
+
+站在第四层的你，就可以不要脸地利用下三层所做的铺垫，随心所欲地发送数据，而不必担心找不到对方了
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_1.gif?raw=true" />
+</p>
+
+虽然你此时还什么都没干，但你还是给自己这一层起了个响亮的名字，叫做**传输层**。
+
+你本以为自己所在的第四层万事大吉，啥事没有，但很快问题就接踵而至。
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>问题来了</b>
+</p>
+
+前三层协议只能把数据包从一个主机搬到另外一台主机，但是，到了目的地以后，数据包*具体交给*哪个 **程序（进程）** 呢？
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_2.png?raw=true" />
+</p>
+
+所以，你需要把通信的进程区分开来，于是就给每个进程分配一个数字编号，你给它起了一个响亮的名字：**端口号**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_3.png?raw=true" />
+</p>
+
+然后你在要发送的数据包上，增加了传输层的头部，**源端口号**与**目标端口号**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_4.png?raw=true" />
+</p>
+
+OK，这样你将原本主机到主机的通信，升级为了*进程和进程之间*的通信。
+
+你没有意识到，你不知不觉实现了 ***UDP*** 协议！
+
+> (当然 UDP 协议中不光有源端口和目标端口，还有数据包长度和校验值，我们暂且略过)
+
+就这样，你用 **UDP** 协议无忧无虑地同 **B** 进行着通信，一直没发生什么问题。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_5.gif?raw=true" />
+</p>
+
+但很快，你发现事情变得非常复杂......
+
 From: https://mp.weixin.qq.com/s/h89R86KhWiQKsBvfZpyF5Q
 
 ## **从单个服务器扩展到百万用户的系统**
