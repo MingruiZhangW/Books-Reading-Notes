@@ -503,4 +503,8 @@
 
 ### **TCP**
 
-- [Note from another source](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/Note.md#dns)
+- [Note from another source](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/Note.md#tcp-in-details)
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/93.png?raw=true" />
+</p>

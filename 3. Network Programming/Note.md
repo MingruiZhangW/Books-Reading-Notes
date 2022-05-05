@@ -608,6 +608,243 @@ OK，这样你将原本主机到主机的通信，升级为了*进程和进程�
 
 但很快，你发现事情变得非常复杂......
 
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>丢包问题</b>
+</p>
+
+由于网络的不可靠，数据包可能在半路丢失，而 **A** 和 **B** 却无法察觉。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_6.gif?raw=true" />
+</p>
+
+对于丢包问题，只要解决两个事就好了。
+
+- 第一个，**A** 怎么知道包丢了？
+> 答案：让 **B** 告诉 **A**
+- 第二个，丢了的包怎么办？
+> 答案：重传
+
+于是你设计了如下方案，**A** 每发一个包，都必须收到来自 **B** 的确认（**ACK**），再发下一个，否则在一定时间内没有收到确认，就**重传**这个包
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_7.gif?raw=true" />
+</p>
+
+你管它叫**停止等待协议**。只要按照这个协议来，虽然 **A** 无法保证 **B** 一定能收到包，但 **A** 能够确认 **B** 是否收到了包，收不到就**重试**，尽最大努力让这个通信过程变得可靠，于是你们现在的通信过程又有了一个新的特征，**可靠交付**。
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>效率问题</b>
+</p>
+
+停止等待虽然能解决问题，但是效率太低了，**A** 原本可以在发完第一个数据包之后立刻开始发第二个数据包，但由于停止等待协议，**A** 必须等数据包到达了 **B** ，且 **B** 的 **ACK** 包又回到了 **A**，才可以继续发第二个数据包，这效率慢得可不是一点两点。
+
+于是你对这个过程进行了改进，采用**流水线**的方式，不再傻傻地等。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_8.gif?raw=true" />
+</p>
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>顺序问题</b>
+</p>
+
+但是网路是复杂的、不可靠的。
+
+有的时候 **A** 发出去的数据包，分别走了不同的路由到达 **B**，*可能无法保证和发送数据包时一样的顺序*。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_9.gif?raw=true" />
+</p>
+
+在流水线中有多个数据包和**ACK**包在乱序流动，他们之间对应关系就乱掉了。
+
+难道还回到停止等待协议？**A** 每收到一个包的确认（**ACK**）再发下一个包，那就根本不存在顺序问题。应该有更好的办法！
+
+**A** 在发送的数据包中增加一个**序号（seq）**，同时 **B** 要在 **ACK** 包上增加一个确认号（**ack**），这样不但解决了停止等待协议的效率问题，也通过这样标序号的方式解决了顺序问题。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_10.gif?raw=true" />
+</p>
+
+而 **B** 这个确认号意味深长：比如 **B** 发了一个确认号为 **ack = 3**，它不仅仅表示 **A** 发送的序号为 **2** 的包收到了，还表示 **2** 之前的数据包都收到了。这种方式叫**累计确认**或**累计应答**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_11.gif?raw=true" />
+</p>
+
+> 注意，实际上 **ack** 的号是收到的最后一个数据包的序号 **seq + 1**，也就是*告诉对方下一个应该发的序号是多少*。但图中为了便于理解，**ack** 就表示收到的那个序号，不必纠结。
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>流量问题</b>
+</p>
+
+有的时候，**A** 发送数据包的速度太快，而 **B** 的接收能力不够，但 **B** 却没有告知 **A** 这个情况。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_12.gif?raw=true" />
+</p>
+
+怎么解决呢？
+
+很简单，**B** 告诉 **A** 自己的**接收能力**，**A** 根据 **B** 的**接收能力**，相应控制自己的**发送速率**，就好了。
+
+B 怎么告诉 A 呢？B 跟 A 说"我很强"这三个字么？那肯定不行，得有一个严谨的规范。
+
+于是 **B** 决定，每次发送数据包给 **A** 时，顺带传过来一个值，叫**窗口大小（win)**，这个值就表示 **B** 的**接收能力**。同理，每次 **A** 给 **B** 发包时也带上*自己的窗口大小*，表示 **A** 的**接收能力**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_13.gif?raw=true" />
+</p>
+
+**B** 告诉了 **A** 自己的窗口大小值，**A** 怎么利用它去做 **A** 这边发包的流量控制呢？
+
+很简单，假如 **B** 给 **A** 传过来的窗口大小 **win = 5**，那 **A** 根据这个值，把自己要发送的数据分成这么几类。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_14.png?raw=true" />
+</p>
+
+当 **A** 不断发送数据包时，*已发送的最后一个序号就往右移动*，直到碰到了*窗口的上边界*，此时 **A** 就无法继续发包，达到了**流量控制**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_15.gif?raw=true" />
+</p>
+
+但是当 **A** 不断发包的同时，**A** 也会收到来自 **B** 的*确认包*，此时**整个窗口会往右移动**，因此**上边界也往右移动**，**A** 就能发更多的数据包了。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_16.gif?raw=true" />
+</p>
+
+以上都是在窗口大小不变的情况下，而 **B** 在发给 **A** 的 **ACK** 包中，**每一个都可以重新设置一个新的窗口大小**，如果 **A** 收到了一个新的窗口大小值，**A** 会随之调整。
+
+如果 **A** 收到了比原窗口值**更大的窗口大小**，比如 **win = 6**，则 **A** 会**直接将窗口上边界向右移动 1 个单位**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_17.gif?raw=true" />
+</p>
+
+如果 **A** 收到了**比原窗口值小的**窗口大小，比如 **win = 4**，则 **A** **暂时不会改变窗口大小**，**更不会将窗口上边界向左移动**，而是**等着 ACK 的到来**，**不断将左边界向右移动**，直到窗口大小值**收缩**到新大小为止。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_18.gif?raw=true" />
+</p>
+
+OK，终于将流量控制问题解决得差不多了，你看着上面一个个小动图，给这个窗口起了一个更生动的名字，**滑动窗口**
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>拥塞问题</b>
+</p>
+
+但有的时候，不是 **B** 的接受能力不够，而是网络不太好，造成了**网络拥塞**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_19.gif?raw=true" />
+</p>
+
+拥塞控制与流量控制有些像，但流量控制是受 **B** 的接收能力影响，而拥塞控制是受**网络环境**的影响。
+
+**拥塞控制的解决办法依然是通过设置一定的窗口大小**，只不过，**流量控制**的窗口大小是 **B** 直接告诉 **A** 的，而**拥塞控制**的窗口大小按理说就应该是网络环境主动告诉 **A**。
+
+但网络环境怎么可能主动告诉 **A** 呢？只能 **A** **单方面通过试探**，**不断感知网络环境的好坏，进而确定自己的拥塞窗口的大小**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_20.gif?raw=true" />
+</p>
+
+拥塞窗口大小的计算有很多复杂的算法，就不在本文中展开了，假如**拥塞窗口的大小为 cwnd**，上一部分**流量控制的滑动窗口的大小为 rwnd**，那么窗口的右边界受这两个值共同的影响，需要取它俩的最小值。
+
+<p align="center" style="font-size: 16px;">
+    <b>窗口大小 = min(cwnd, rwnd)</b>
+</p>
+
+含义很容易理解，当 **B** 的接受能力比较差时，即使网络非常通畅，**A** 也需要根据 **B** 的接收能力限制自己的发送窗口。当网络环境比较差时，即使 **B** 有很强的接收能力，**A** 也要根据网络的拥塞情况来限制自己的发送窗口。正所谓受其短板的影响嘛~
+
+> 窗口大小为流量窗口和拥塞窗口之中的最小值
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>连接问题</b>
+</p>
+
+有的时候，**B** 主机的相应进程还没有准备好或是挂掉了，**A** 就开始发送数据包，导致了浪费。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_21.gif?raw=true" />
+</p>
+
+这个问题在于，**A** 在跟 **B** 通信之前，没有事先确认 **B** 是否已经准备好，就开始发了一连串的信息。就好比你和另一个人打电话，你还没有"喂"一下确认对方有没有在听，你就巴拉巴拉说了一堆。
+
+这个问题该怎么解决呢？
+
+地球人都知道，**三次握手**嘛！
+
+```
+  A：我准备好了(SYN)
+
+  B：我知道了(ACK)，我也准备好了(SYN) (ACK + SYN)
+
+  A：我知道了(ACK)
+```
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_22.gif?raw=true" />
+</p>
+
+**A** 与 **B** 各自在内存中维护着自己的状态变量，三次握手之后，双方的状态都变成了连接已建立（**ESTABLISHED**）。
+
+虽然就只是发了三次数据包，并且在各自的内存中维护了状态变量，但这么说总觉得太 low，你看这个过程相当于双方建立连接的过程，于是你灵机一动，就叫它**面向连接**吧。
+
+注意：这个连接是虚拟的，是由 **A** 和 **B** 这两个终端共同维护的，在网络中的设备根本就不知道连接这回事儿！
+
+但凡事有始就有终，有了建立连接的过程，就要**考虑释放连接**的过程，又是地球人都知道，**四次挥手**嘛！
+
+```
+  A：再见，我要关闭了(FIN)
+
+  B：我知道了(ACK)
+
+    给 B 一段时间把自己的事情处理完...
+
+  B：再见，我要关闭了(FIN)
+
+  A：我知道了(ACK)
+```
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_23.gif?raw=true" />
+</p>
+
+<p align="center" style="font-size: 16px;color: #83AD9B">
+    <b>总结</b>
+</p>
+
+以上讲述的，就是 TCP 协议的核心思想，上面过程中需要传输的信息，就体现在 TCP 协议的头部，这里放上最常见的 TCP 协议头解读的图
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_24.png?raw=true" />
+</p>
+
+- **TCP** 是 ```面向连接```的、```可靠```的、```基于字节流```的 传输层通信协议
+
+面向连接、可靠，这两个词通过上面的讲述很容易理解，那什么叫做基于字节流呢？
+
+很简单，**TCP** 在建立连接时，需要告诉对方 **MSS（最大报文段大小)**。
+
+也就是说，如果要发送的数据很大，在 **TCP** 层是需要按照 **MSS** 来切割成一个个的 **TCP 报文段** 的。
+
+切割的时候我才不管你原来的数据表示什么意思，需要在哪里断句啥的，我就把它当成一串毫无意义的字节，在我想要切割的地方咔嚓就来一刀，标上序号，只要接收方再根据这个序号拼成最终想要的完整数据就行了。
+
+在我 TCP 传输这里，我就把它当做一个个的字节，也就是基于字节流的含义了。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_24.jpeg?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/93.png?raw=true" />
+</p>
+
 From: https://mp.weixin.qq.com/s/h89R86KhWiQKsBvfZpyF5Q
 
 ## **从单个服务器扩展到百万用户的系统**
