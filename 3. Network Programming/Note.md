@@ -838,7 +838,7 @@ OK，终于将流量控制问题解决得差不多了，你看着上面一个个
 在我 TCP 传输这里，我就把它当做一个个的字节，也就是基于字节流的含义了。
 
 <p align="center">
-  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_24.jpeg?raw=true" />
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tcp_24.jpg?raw=true" />
 </p>
 
 <p align="center">

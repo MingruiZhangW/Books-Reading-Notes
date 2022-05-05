@@ -508,3 +508,33 @@
 <p align="center">
   <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/93.png?raw=true" />
 </p>
+
+### **UDP & TCP Pseudo Header**
+
+- https://www.omnisecu.com/tcpip/udp-pseudo-header.php
+
+**UDP** uses a concept called as **"pseudo header"**. Pseudo header helps to find transfer bit errors and also to protect against other types of network errors like the possibility of IP datagram reaching a wrong host.
+
+Below image contains the UDP header format.
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/94.jpg?raw=true" />
+</p>
+
+**Checksum** value is calculated after prepending a pseudo header to actual UDP header and data. "Pseudo header" has many fields from IP header also.
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/95.jpg?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/96.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/97.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/98.png?raw=true" />
+</p>
