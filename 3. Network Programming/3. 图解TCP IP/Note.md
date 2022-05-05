@@ -373,3 +373,70 @@
 <p align="center">
   <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/73.png?raw=true" />
 </p>
+
+### **NAT** - page. 196
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/74.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/75.png?raw=true" />
+</p>
+
+#### **NAPT**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/76.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/77.png?raw=true" />
+</p>
+
+#### **NAT-PT**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/78.png?raw=true" />
+</p>
+
+#### **Problems and Limitations for NAT**
+
+- NAT devices allow the use of private IP addresses on private networks behind routers with a single public IP address facing the Internet. The internal network devices communicate with hosts on the external network by changing the source address of outgoing requests to that of the NAT device and relaying replies back to the originating device.
+
+- This leaves the internal network ill-suited for hosting servers, as the NAT device has no automatic method of determining the internal host for which incoming packets are destined. This is not a problem for general web access and email. However, applications such as **peer-to-peer** file sharing, **VoIP** services, and **video game consoles** ***require clients to be servers as well***. <ins>Incoming requests cannot be easily correlated to the proper internal host.</ins> Furthermore, many of these types of services carry IP address and port number information in the application data, potentially requiring substitution with deep packet inspection.
+
+- Network address translation technologies are not standardized. As a result, the methods used for NAT traversal are often proprietary and poorly documented. Many traversal techniques require assistance from servers outside of the masqueraded network. Some methods use the server only when establishing the connection, while others are based on relaying all data through it, which increases the bandwidth requirements and latency, detrimental to real-time voice and video communications.
+
+- NAT traversal techniques usually bypass enterprise security policies. Enterprise security experts prefer techniques that explicitly cooperate with NAT and firewalls, allowing NAT traversal while still enabling marshalling at the NAT to enforce enterprise security policies. IETF standards based on this security model are Realm-Specific IP (RSIP) and middlebox communications (MIDCOM).
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/79.png?raw=true" />
+</p>
+
+#### **NAT traversal**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/80.png?raw=true" />
+</p>
+
+> The following NAT traversal techniques are available:
+
+- ```Socket Secure (SOCKS)``` is a technology created in the early 1990s that uses proxy servers to relay traffic between networks or systems.
+- ```Traversal Using Relays around NAT (TURN)``` is a relay protocol designed specifically for NAT traversal.
+- ```NAT hole punching``` is a general technique that exploits how NATs handle some protocols (for example, UDP, TCP, or ICMP) to allow previously blocked packets through the NAT.
+
+```
+  UDP hole punching
+  TCP hole punching
+  ICMP hole punching
+```
+
+- ```Session Traversal Utilities for NAT (STUN)``` is a standardized set of methods and a network protocol for NAT hole punching. It was designed for UDP but was also extended to TCP.
+- ```Interactive Connectivity Establishment (ICE)``` is a complete protocol for using STUN and/or TURN to do NAT traversal while picking the best network route available. It fills in some of the missing pieces and deficiencies that were not mentioned by STUN specification.
+- ```UPnP``` ```Internet Gateway Device Protocol (IGDP)``` is supported by many small NAT gateways in home or small office settings. It allows a device on a network to ask the router to open a port.
+- ```NAT-PMP``` is a protocol introduced by Apple as an alternative to IGDP.
+- ```PCP``` is a successor of NAT-PMP.
+- ```Application-level gateway (ALG)``` is a component of a firewall or NAT that allows for configuring NAT traversal filters. It is claimed by numerous people that this technique creates more problems than it solves.
+
+> One solution for NAT traversal, called the ```Internet Gateway Device Protocol (IGD Protocol)```, is ***implemented via UPnP***. Many routers and firewalls expose themselves as Internet Gateway Devices, allowing any local UPnP control point to perform a variety of actions, including retrieving the external IP address of the device, enumerating existing port mappings, and adding or removing port mappings. By adding a port mapping, a UPnP controller behind the IGD can enable traversal of the IGD from an external address to an internal client.
