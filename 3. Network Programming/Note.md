@@ -1340,6 +1340,164 @@ Google 在推```SPDY```的时候就已经意识到了这些问题，于是就另
 
 From: https://mp.weixin.qq.com/s/n8HBG9LuzQjOT__M4pxKwA
 
+## **HTTPS**
+
+**```HTTPS``` - A way of encrypting ```HTTP```. It basically wraps ```HTTP``` messages up in an encrypted format using ```SSL/TLS```.**
+
+- [How an ```SSL``` connection is established](https://robertheaton.com/2014/03/27/how-does-https-actually-work/)
+
+An ```SSL``` connection between a client and server is set up by a handshake, the goals of which are:
+
+```
+  1. To satisfy the client that it is talking to the right server (and optionally visa versa)
+  2. For the parties to have agreed on a “cipher suite”, which includes which encryption algorithm they will use to exchange data
+  3. For the parties to have agreed on any necessary keys for this algorithm
+```
+Once the connection is established, both parties can use the agreed algorithm and keys to securely send messages to each other. We will break the handshake up into 3 main phases - Hello, Certificate Exchange and Key Exchange.
+
+1. Hello - The handshake begins with the client sending a ClientHello message. This contains all the information the server needs in order to connect to the client via SSL, including the various cipher suites and maximum SSL version that it supports. The server responds with a ServerHello, which contains similar information required by the client, including a decision based on the client’s preferences about which cipher suite and version of SSL will be used.
+
+2. Certificate Exchange - Now that contact has been established, the server has to prove its identity to the client. This is achieved using its SSL certificate, which is a very tiny bit like its passport. An SSL certificate contains various pieces of data, including the name of the owner, the property (eg. domain) it is attached to, the certificate’s public key, the digital signature and information about the certificate’s validity dates. The client checks that it either implicitly trusts the certificate, or that it is verified and trusted by one of several Certificate Authorities (CAs) that it also implicitly trusts. Much more about this shortly. Note that the server is also allowed to require a certificate to prove the client’s identity, but this typically only happens in very sensitive applications.
+
+3. Key Exchange - The encryption of the actual message data exchanged by the client and server will be done using a symmetric algorithm, the exact nature of which was already agreed during the Hello phase. A symmetric algorithm uses a single key for both encryption and decryption, in contrast to asymmetric algorithms that require a public/private key pair. Both parties need to agree on this single, symmetric key, a process that is accomplished securely using asymmetric encryption and the server’s public/private keys.
+
+- **Key Exchange algorithm**
+
+> **Anonymous Diffie-Hellman** uses Diffie-Hellman, but without authentication. Because the keys used in the exchange are not authenticated, the protocol is susceptible to Man-in-the-Middle attacks. Note: if you use this scheme, a call to SSL_get_peer_certificate will return NULL because you have selected an anonymous protocol. This is the only time SSL_get_peer_certificate is allowed to return NULL under normal circumstances.
+
+You should not use Anonymous Diffie-Hellman. You can prohibit its use in your code by using "!ADH" in your call to SSL_set_cipher_list.
+
+> **Fixed Diffie-Hellman** embeds the server's public parameter in the certificate, and the CA then signs the certificate. That is, the certificate contains the Diffie-Hellman public-key parameters, and those parameters never change. ***(with RSA as public key in certificate, but fixed Diffie-Hellman key pairs)***
+
+> **Ephemeral Diffie-Hellman** uses temporary, public keys. Each instance or run of the protocol uses a different public key. The authenticity of the server's temporary key can be verified by checking the signature on the key. **Because the public keys are temporary, a compromise of the server's long term signing key does not jeopardize the privacy of past sessions.** This is known as Perfect Forward Secrecy (PFS). ***(with RSA as public key in certificate, but radom Diffie-Hellman key pairs)***
+
+### **Forward secrecy**
+
+- ***Forward secrecy allows today information to be kept secret even if the private key is compromised in the future.*** Achieving this property is usually costly and therefore, most web servers do not enable it on purpose. Google recently announced support of forward secrecy on their HTTPS sites. Adam Langley wrote a post with more details on what was achieved to increase efficiency of such a mechanism: with a few fellow people, he wrote an efficient implementation of some elliptic curve cryptography for OpenSSL.
+
+1. **Without forward secrecy**
+
+To understand the problem when forward secrecy is absent, let’s look at the classic ```TLS``` handshake when using a cipher suite like ```AES128-SHA```. During this handshake, the server will present its certificate and both the client and the server will agree on a master secret.
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/ssl_1.svg?raw=true" />
+</p>
+
+This secret is built from a 48byte premaster secret generated and encrypted by the client with the public key of the server. It is then sent in a Client Key Exchange message to the server during the third step of the TLS handshake. The master secret is derived from this premaster secret and random values sent in clear-text with Client Hello and Server Hello messages.
+
+This scheme is secure as long as only the server is able to decrypt the premaster secret (with its private key) sent by the client. *Let’s suppose that an attacker records all exchanges between the server and clients during a year. Two years later, the server is decommissioned and sent for recycling. The attacker is able to recover the hard drive with the private key. They can now decrypt any session they recorded: the encrypted premaster secret sent by a client is decrypted with the private key and the master secret is derived from it. The attacker can now recover passwords and other sensitive information that can still be valuable today.*
+
+**The main problem lies in the fact that the private key is used for two purposes**: ***authentication*** of the server and ***encryption*** of a shared secret. Authentication only matters while the communication is established, but encryption is expected to last for years.
+
+2. **Diffie-Hellman with discrete logarithm**
+
+One way to solve the problem is to keep using the private key for authentication but uses an independent mechanism to agree on a shared secret. Hopefully, there exists a well-known protocol for this: the Diffie-Hellman key exchange. It is a method of exchanging keys without any prior knowledge. Here is how it works in ```TLS```: ***(```DHE-RSA-AES128-SHA```)***
+
+```
+1. The server needs to generate once (for example, with openssl dhparam command):
+      p, a large prime number,
+      g, a primitive root modulo p—for every integer a coprime to p, 
+        there exists an integer k such that g^k\equiv a\pmod{p}.
+2. The server picks a random integer a and compute g^a \bmod p. After sending its regular Certificate message, 
+   it will also send a Server Key Exchange message (not included in the handshake depicted above) containing,
+   unencrypted but signed with its private key for authentication purpose:
+      random value from the Client Hello message,
+      random value from the Server Hello message,
+      p, g,
+      g^a\bmod p=A.
+3. The client checks that the signature is correct. It also picks a random integer b and sends g^b \bmod p=B
+   in a Client Key Exchange message. It will also compute A^b\bmod p=g^{ab}\bmod p which is the premaster secret
+   from which the master secret is derived.
+4. The server will receive B and compute B^a\bmod p=g^{ab}\bmod p which is the same premaster secret known by the client.
+```
+
+Again, ***the private key is only used for authentication purpose***. An eavesdropper will only know p, g, g^a\bmod p and g^b\bmod p. Computing g^{ab}\bmod p from these values is the discrete logarithm problem for which there is no known efficient solution. 
+
+So ```RSA``` in this case **points to the key pair of the server, the public key of which is in the server certificate.** This certificate is used to establish a chain to a trusted (root) certificate in the certificate store, e.g. the one in your browser or system store. This chain is verified and validated so that the public key of the server can be trusted to a certain degree (the level of trust established by trusting all of the CA's in the certificate store is an ongoing debate).
+
+Because the Diffie-Hellman exchange described above always uses new random values a and b, it is called Ephemeral Diffie-Hellman (EDH or DHE). Cipher suites like ```DHE-RSA-AES128-SHA``` use this protocol to achieve **perfect forward secrecy**.
+
+> **Perfect forward secrecy** is an enhanced version of forward secrecy. It assumes each exchanged key are independent and therefore a compromised key cannot be used to compromise another one.
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/ssl_2.png?raw=true" />
+</p>
+
+### **Man-in-the-middle (MitM) attacks** 
+
+```HTTP``` 协议被认为不安全是因为传输过程容易被监听者勾线监听、伪造服务器，而 ```HTTPS``` 协议主要解决的便是网络传输的安全性问题。
+
+首先我们假设不存在认证机构，任何人都可以制作证书，这带来的安全风险便是经典的 **“中间人攻击”** 问题。
+
+“中间人攻击”的具体过程如下：
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/ssl_3.webp?raw=true" />
+</p>
+
+过程原理：
+```
+  本地请求被劫持（如DNS劫持等），所有请求均发送到中间人的服务器
+  中间人服务器返回中间人自己的证书
+  客户端创建随机数，通过中间人证书的公钥对随机数加密后传送给中间人，然后凭随机数构造对称加密对传输内容进行加密传输
+  中间人因为拥有客户端的随机数，可以通过对称加密算法进行内容解密
+  中间人以客户端的请求内容再向正规网站发起请求
+  因为中间人与服务器的通信过程是合法的，正规网站通过建立的安全通道返回加密后的数据
+  中间人凭借与正规网站建立的对称加密算法对内容进行解密
+  中间人通过与客户端建立的对称加密算法对正规内容返回的数据进行加密传输
+  客户端通过与中间人建立的对称加密算法对返回结果数据进行解密
+  由于缺少对证书的验证，所以客户端虽然发起的是 HTTPS 请求，但客户端完全不知道自己的网络已被拦截，传输内容被中间人全部窃取。
+```
+
+- 浏览器是如何确保 ```CA``` 证书的合法性？
+
+*证书包含什么信息？*
+
+```
+  颁发机构信息
+  公钥
+  公司信息
+  域名
+  有效期
+  指纹
+  ……
+```
+*证书的合法性依据是什么？*
+
+首先，权威机构是要有认证的，不是随便一个机构都有资格颁发证书，不然也不叫做权威机构。另外，证书的可信性基于信任制，权威机构需要对其颁发的证书进行信用背书，只要是权威机构生成的证书，我们就认为是合法的。所以权威机构会对申请者的信息进行审核，不同等级的权威机构对审核的要求也不一样，于是证书也分为免费的、便宜的和贵的。
+
+*浏览器如何验证证书的合法性？*
+
+浏览器发起 ```HTTPS``` 请求时，服务器会返回网站的 ```SSL``` 证书，浏览器需要对证书做以下验证：
+
+```
+验证域名、有效期等信息是否正确。证书上都有包含这些信息，比较容易完成验证；
+判断证书来源是否合法。每份签发证书都可以根据验证链查找到对应的根证书，操作系统、浏览器会在本地存储权威机构的根证书利用本地根证书可以对对应机构签发证书完成来源验证；
+判断证书是否被篡改。需要与 CA 服务器进行校验；
+判断证书是否已吊销。通过CRL（Certificate Revocation List 证书注销列表）和 OCSP（Online Certificate Status Protocol 在线证书状态协议）实现，其中 OCSP 可用于第3步中以减少与 CA
+服务器的交互，提高验证效率
+```
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/ssl_4.webp?raw=true" />
+</p>
+
+以上任意一步都满足的情况下浏览器才认为证书是合法的。
+
+- 这里插一个我想了很久的但其实答案很简单的问题：
+> 既然证书是公开的，如果要发起中间人攻击，我在官网上下载一份证书作为我的服务器证书，那客户端肯定会认同这个证书是合法的，如何避免这种证书冒用的情况？
+
+> 其实这就是非加密对称中公私钥的用处，虽然中间人可以得到证书，但私钥是无法获取的，一份公钥是不可能推算出其对应的私钥，中间人即使拿到证书也无法伪装成合法服务端，因为无法对客户端传入的加密数据进行解密。(DHE-RSA-AES128-SHA)
+
+*只有认证机构可以生成证书吗？*
+
+如果需要浏览器不提示安全风险，那只能使用认证机构签发的证书。但浏览器通常只是提示安全风险，并不限制网站不能访问，所以从技术上谁都可以生成证书，只要有证书就可以完成网站的
+```HTTPS``` 传输。
+
+From: https://vincent.bernat.ch/en/blog/2011-ssl-perfect-forward-secrecy <br>
+From: https://robertheaton.com/2014/03/27/how-does-https-actually-work/ <br>
+From: https://www.codenong.com/cs107123938/
+
 ## [**SSH**](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/3.%20%E5%9B%BE%E8%A7%A3TCP%20IP/Note.md#ssh)
 
 ## **DNS**
@@ -1457,6 +1615,8 @@ From: https://mp.weixin.qq.com/s/n8HBG9LuzQjOT__M4pxKwA
 有些同学可能联想到**负载均衡**，没错，大致上就是这个意思。
 
 *对于中国用户来说，对根的请求，一般不会跑到美国去，而是通过任播技术路由到中国境内的根镜像上。*
+
+> DNS has always been designed to use both UDP and TCP port 53 from the start1 , with UDP being the default, and fall back to using TCP when it is unable to communicate on UDP, typically when the packet size is too large to push through in a single UDP packet.
 
 From: https://mp.weixin.qq.com/s/JQE4iIFy5I4bDtAegZULWg
 
