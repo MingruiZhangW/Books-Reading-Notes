@@ -1032,13 +1032,315 @@ From: https://mp.weixin.qq.com/s/ghFDVMCacgYuTcG5klxTiw
 From: https://mp.weixin.qq.com/s/H3nj_6mR1XCyi6uBboVIhA <br/>
 From: https://mp.weixin.qq.com/s/kD95oe03-EDBIOx7KLehdA
 
-## **HTTP && HTTPS && HTTP/2 && HTTP/3**
+## **HTTP && HTTP/2 && HTTP/3**
 
-From: https://mp.weixin.qq.com/s/n8HBG9LuzQjOT__M4pxKwA <br/>
-From: https://stackoverflow.com/questions/53488601/what-is-difference-between-https-and-http-2 <br/>
-From: https://mp.weixin.qq.com/s/TU36OLc5pE-vbsEo0aHZGA <br/>
-From: https://mp.weixin.qq.com/s/zNC6qnW3DXD6B8eHlL1tjw <br/>
-From: https://www.codenong.com/cs107123938/
+```HTTP/2``` 相比于 ```HTTP/1.1```，可以说是*大幅度提高了网页的性能*，只需要升级到该协议就可以减少很多之前需要做的性能优化工作，当然兼容问题以及如何优雅降级应该是国内还不普遍使用的原因之一。
+
+虽然 ```HTTP/2``` 提高了网页的性能，但是并不代表它已经是完美的了，```HTTP/3``` 就是为了解决 ```HTTP/2``` 所存在的一些问题而被推出来的。
+
+### **HTTP/1.1发明以来发生了哪些变化？**
+
+如果仔细观察打开那些最流行的网站首页所需要下载的资源的话，会发现一个非常明显的趋势。近年来加载网站首页需要的下载的数据量在逐渐增加，并已经超过了2100K。但在这里我们更应该关心的是：平均每个页面为了完成显示与渲染所需要下载的资源数已经超过了100个。
+
+正如下图所示，从2011年以来,传输数据大小与平均请求资源数量不断持续增长，并没有减缓的迹象。该图表中绿色直线展示了传输数据大小的增长，红色直线展示了平均请求资源数量的增长。
+
+```HTTP/1.1```自从1997年发布以来，我们已经使用```HTTP/1.x``` 相当长一段时间了，但是随着近十年互联网的爆炸式发展，***从当初网页内容以文本为主,到现在以富媒体（如图片、声音、视频）为主,而且对页面内容实时性高要求的应用越来越多(比如聊天、视频直播),于是当时协议规定的某些特性，已经无法满足现代网络的需求了***。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_1.png?raw=true" />
+</p>
+
+### ```HTTP/1.1```的缺陷
+
+- **高延迟**--带来页面加载速度的降低
+
+虽然近几年来网络带宽增长非常快，然而我们却并没有看到网络延迟有对应程度的降低。网络延迟问题主要由于 ***队头阻塞(Head-Of-Line Blocking)*** ,导致带宽无法被充分利用。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_2.png?raw=true" />
+</p>
+
+**队头阻塞是指当顺序发送的请求序列中的一个请求因为某种原因被阻塞时，在后面排队的所有请求也一并被阻塞，会导致客户端迟迟收不到数据。**
+
+针对队头阻塞,人们尝试过以下办法来解决:
+
+> 将同一页面的资源分散到不同域名下，提升连接上限。 Chrome有个机制，对于同一个域名，默认允许同时建立 6 个 TCP持久连接，使用持久连接时，虽然能公用一个TCP管道，但是在一个管道中同一时刻只能处理一个请求，在当前的请求没有结束之前，其他的请求只能处于阻塞状态。另外如果在同一个域名下同时有10个请求发生，那么其中4个请求会进入排队等待状态，直至进行中的请求完成。
+
+> Spriting 合并多张小图为一张大图,再用JavaScript或者CSS将小图重新“切割”出来的技术。
+
+> 内联(Inlining)是另外一种防止发送很多小图请求的技巧，将图片的原始数据嵌入在CSS文件里面的URL里，减少网络请求次数。
+
+```
+.icon1 {background: url(data:image/png;base64,<data>) no-repeat;}
+.icon2 {background: url(data:image/png;base64,<data>) no-repeat;}
+```
+> 拼接(Concatenation)将多个体积较小的JavaScript使用webpack等工具打包成1个体积更大的JavaScript文件,但如果其中1个文件的改动就会导致大量数据被重新下载多个文件。
+
+- 无状态特性--带来的**巨大HTTP头部**
+
+由于报文Header一般会携带"User Agent""Cookie""Accept""Server"等许多固定的头字段（如下图），多达几百字节甚至上千字节，但**Body却经常只有几十字节（比如GET请求、
+204/301/304响应）**，成了不折不扣的“大头儿子”。**Header里携带的内容过大**，在一定程度上增加了传输的成本。更要命的是，成千上万的请求响应报文里有很多字段值都是重复的，非常浪费。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_3.png?raw=true" />
+</p>
+
+- **明文传输**--带来的不安全性
+
+```HTTP/1.1```在传输数据时，*所有传输的内容都是明文，客户端和服务器端都无法验证对方的身份，这在一定程度上无法保证数据的安全性*。
+
+你有没有听说过"免费WiFi陷阱”之类的新闻呢？黑客就是利用了HTTP明文传输的缺点，在公共场所架设一个WiFi热点开始“钓鱼”，诱骗网民上网。一旦你连上了这个WiFi热点，所有的流量都会被截获保存，里面如果有银行卡号、网站密码等敏感信息的话那就危险了，黑客拿到了这些数据就可以冒充你为所欲为。
+
+- **不支持服务器推送消息**
+
+### ```SPDY``` 协议与 ```HTTP/2``` 简介
+
+- ```SPDY``` 协议
+
+上面我们提到,由于```HTTP/1.x```的缺陷，我们会引入雪碧图、将小图内联、使用多个域名等等的方式来提高性能。不过这些优化都绕开了协议，直到2009年，**谷歌公开了自行研发的** ```SPDY``` 协议，主要**解决HTTP/1.1效率不高**的问题。谷歌推出SPDY，才算是正式改造HTTP协议本身。降低延迟，压缩header等等，SPDY的实践证明了这些优化的效果，也最终带来```HTTP/2```的诞生。
+
+```HTTP/1.1```有两个主要的缺点：安全不足和性能不高，***由于背负着 ```HTTP/1.x``` 庞大的历史包袱,所以协议的修改,兼容性是首要考虑的目标***，否则就会破坏互联网上无数现有的资产。**```SPDY```位于```HTTP```之下，```TCP```和```SSL```之上**，这样可以*轻松兼容老版本的```HTTP```协议*(将```HTTP1.x```的内容封装成一种新的frame格式)，同时可以使用已有的```SSL```功能。
+
+```SPDY``` 协议在Chrome浏览器上证明可行以后，就被**当作 ```HTTP/2``` 的基础**，主要特性都在 ```HTTP/2``` 之中得到继承。
+
+- ```HTTP/2``` 简介
+
+2015年，```HTTP/2``` 发布。```HTTP/2```是现行```HTTP```协议（```HTTP/1.x```）的替代，但它不是重写，```HTTP```方法/状态码/语义都与```HTTP/1.x```一样。***```HTTP/2```基于```SPDY```，专注于性能，最大的一个目标是在用户和网站间只用一个连接（connection）***。从目前的情况来看，国内外一些排名靠前的站点基本都实现了```HTTP/2```的部署，使用```HTTP/2```能带来20%~60%的效率提升。
+
+```HTTP/2```由两个规范（Specification）组成：
+
+```
+  Hypertext Transfer Protocol version 2 - RFC7540
+  HPACK - Header Compression for HTTP/2 - RFC7541
+```
+
+### ```HTTP/2``` 新特性
+
+- **1. 二进制传输**
+
+***```HTTP/2```传输数据量的大幅减少,主要有两个原因:以二进制方式传输和Header 压缩***。我们先来介绍二进制传输,```HTTP/2``` 采用二进制格式传输数据，而非```HTTP/1.x``` 里纯文本形式的报文 ，二进制协议解析起来更高效。```HTTP/2``` 将请求和响应数据分割为更小的帧，并且它们采用二进制编码。
+
+它把```TCP```协议的部分特性挪到了应用层，*把原来的"Header+Body"的消息"打散"为数个小片的二进制"帧"(Frame),用"HEADERS"帧存放头数据、"DATA"帧存放实体数据。* ```HTTP/2```数据分帧后"Header+Body"的报文结构就完全消失了，协议看到的只是一个个的"碎片"。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_4.png?raw=true" />
+</p>
+
+```HTTP/2``` 中，同域名下所有通信都在单个连接上完成，该连接可以承载任意数量的双向数据流。每个数据流都以消息的形式发送，而消息又由一个或多个帧组成。***多个帧之间可以乱序发送，根据帧首部的流标识可以重新组装。***
+
+- **2. Header 压缩**
+
+```HTTP/2```并没有使用传统的压缩算法，而是开发了专门的 **"HPACK”算法**，在客户端和服务器两端建立“字典”，用索引号表示重复的字符串，还采用哈夫曼编码来压缩整数和字符串，可以达到50%~90%的高压缩率
+
+具体来说:
+
+```
+
+1. 在客户端和服务器端使用“首部表”来跟踪和存储之前发送的键-值对，对于相同的数据，不再通过每次请求和响应发送；
+
+2. 首部表在HTTP/2的连接存续期内始终存在，由客户端和服务器共同渐进地更新;
+
+3. 每个新的首部键-值对要么被追加到当前表的末尾，要么替换表中之前的值
+
+```
+
+例如下图中的两个请求， 请求一发送了所有的头部字段，第二个请求则只需要发送差异数据，这样可以减少冗余数据，降低开销
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_5.jpg?raw=true" />
+</p>
+
+- **3. 多路复用 (Multiplexing)**
+
+在 ```HTTP/2``` 中引入了多路复用的技术。*多路复用很好的解决了浏览器限制同一个域名下的请求数量的问题*，同时也接更容易实现全速传输，毕竟新开一个 TCP 连接都需要慢慢提升传输速度。
+
+大家可以通过 该链接 直观感受下 ```HTTP/2``` 比 ```HTTP/1``` 到底快了多少。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_6.gif?raw=true" />
+</p>
+
+在 ```HTTP/2``` 中，有了二进制分帧之后，```HTTP /2``` 不再依赖 ```TCP``` 链接去实现多流并行了，在 ```HTTP/2```中,
+
+```
+1. 同域名下所有通信都在单个连接上完成。
+
+2. 单个连接可以承载任意数量的双向数据流。
+
+3. 数据流以消息的形式发送，而消息又由一个或多个帧组成，多个帧之间可以乱序发送，因为根据帧首部的流标识可以重新组装。
+```
+
+这一特性，使性能有了极大提升：
+
+```
+1. 同个域名只需要占用一个 TCP 连接，使用一个连接并行发送多个请求和响应,这样整个页面资源的下载过程只需要一次慢启动，同时也避免了多个TCP连接竞争带宽所带来的问题。
+
+2. 并行交错地发送多个请求/响应，请求/响应之间互不影响。
+
+3. 在HTTP/2中，每个请求都可以带一个31bit的优先值，0表示最高优先级， 数值越大优先级越低。有了这个优先值，客户端和服务器就可以在处理不同的流时采取不同的策略，以最优的方式发送流、消息和帧。
+```
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_7.png?raw=true" />
+</p>
+
+如上图所示，多路复用的技术可以只通过一个 TCP 连接就可以传输所有的请求数据。
+
+> ***多路复用的原理解析***
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_8.webp?raw=true" />
+</p>
+
+```HTTP/1.1```协议的请求-响应模型大家都是熟悉的，我们用```“HTTP消息”```来表示一个请求-响应的过程，那么```HTTP/1.1```中的消息是“管道串形化”的：**只有等一个消息完成之后，才能进行下一条消息**；而```HTTP/2```中**多个消息交织在了一起**，这无疑提高了“通信”的效率。这就是多路复用：在一个```HTTP```的连接上，多路“HTTP消息”同时工作。
+
+- ***为什么```HTTP/1.1```不能实现“多路复用”？***
+
+简单回答就是：```HTTP/2```是**基于二进制“帧”的协议**，``HTTP/1.1``是基于“**文本分割”解析**的协议。
+
+看一个```HTTP/1.1```简单的```GET```请求例子：
+
+```
+GET / HTTP/1.1
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Encoding:gzip, deflate, br
+Accept-Language:zh-CN,zh;q=0.9,en;q=0.8
+Cache-Control:max-age=0
+Connection:keep-alive
+Cookie:imooc_uuid=b2076a1d-6a14-4cd5-91b0-17a9a2461cf4; imooc_isnew_ct=1517447702; imooc_isnew=2; zg_did=%7B%22did%22%3A%20%221662d799f3f17d-0afe8166871b85-454c092b-100200-1662d799f4015b%22%7D; loginstate=1; apsid=Y4ZmEwNGY3OTUwMTdjZTk0ZTc4YzBmYThmMDBmZDYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANDEwNzI4OQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5NTMzNjIzNjVAcXEuY29tAAAAAAAAAAAAAAAAAAAAADBmNmM5MzczZTVjMTk3Y2VhMDE2ZjUxNmQ0NDUwY2IxIDPdWyAz3Vs%3DYj; Hm_lvt_fb538fdd5bd62072b6a984ddbc658a16=1541222935,1541224845; Hm_lvt_f0cfcccd7b1393990c78efdeebff3968=1540010199,1541222930,1541234759; zg_f375fe2f71e542a4b890d9a620f9fb32=%7B%22sid%22%3A%201541297212384%2C%22updated%22%3A%201541297753524%2C%22info%22%3A%201541222929083%2C%22superProperty%22%3A%20%22%7B%5C%22%E5%BA%94%E7%94%A8%E5%90%8D%E7%A7%B0%5C%22%3A%20%5C%22%E6%85%95%E8%AF%BE%E7%BD%91%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1%5C%22%2C%5C%22%E5%B9%B3%E5%8F%B0%5C%22%3A%20%5C%22web%5C%22%7D%22%2C%22platform%22%3A%20%22%7B%7D%22%2C%22utm%22%3A%20%22%7B%7D%22%2C%22referrerDomain%22%3A%20%22%22%2C%22cuid%22%3A%20%22Jph3DQ809OQ%2C%22%7D; PHPSESSID=h5jn68k1fcaadn61bpoqa9hch2; cvde=5be7a057c314b-1; IMCDNS=1
+Host:www.imooc.com
+Referer:https://www.imooc.com/
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36
+```
+
+以上就是```HTTP/1.1```发送请求消息的文本格式：**以换行符分割每一条key:value的内容**，解析这种数据用不着什么高科技，相反的，***解析这种数据往往速度慢且容易出错***。*“服务端”需要不断的读入字节，直到遇到分隔符（这里指换行符，代码中可能使用/n或者/r/n表示）*，这种解析方式是可行的，并且```HTTP/1.1```已经被广泛使用了二十多年，这事已经做过无数次了，问题一直都是存在的：
+
+```
+  1. 一次只能处理一个请求或响应，因为这种以分隔符分割消息的数据，在完成之前不能停止解析。
+  2. 解析这种数据无法预知需要多少内存，这会带给“服务端”很大的压力，因为它不知道要把一行要解析的内容读到多大的“缓冲区”中，在保证解析效率和速度的前提下：内存该如何分配？
+```
+
+- ***```HTTP/2```帧结构设计和多路复用实现***
+前边提到：```HTTP/2```设计是基于“二进制帧”进行设计的，这种设计无疑是一种“高超的艺术”，因为它实现了一个目的：**一切可预知，一切可控**。
+
+帧是一个数据单元，实现了对消息的封装。下面是```HTTP/2```的帧结构：
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_9.webp?raw=true" />
+</p>
+
+帧的字节中保存了不同的信息，前9个字节对于每个帧都是一致的，**“服务器”解析```HTTP/2```的数据帧时只需要解析这些字节，就能准确的知道整个帧期望多少字节数来进行处理信息**。
+
+***如果使用```HTTP/1.1```的话，你需要发送完上一个请求，才能发送下一个；由于```HTTP/2```是分帧的，请求和响应可以交错甚至可以复用。***
+
+- **4. Server Push**
+
+```HTTP2```还在一定程度上改变了传统的“请求-应答”工作模式，服务器不再是完全被动地响应请求，也可以新建“流”主动向客户端发送消息。比如，在浏览器刚请求HTML的时候就提前把可能会用到的JS、CSS文件发给客户端，减少等待的延迟，这被称为"服务器推送"（ Server Push，也叫 Cache push）
+
+例如下图所示,**服务端主动把JS和CSS文件推送给客户端，而不需要客户端解析HTML时再发送这些请求**。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_10.png?raw=true" />
+</p>
+
+另外需要补充的是,服务端可以主动推送，客户端也有权利选择是否接收。如果服务端推送的资源已经被浏览器缓存过，**浏览器可以通过发送RST_STREAM帧来拒收**。主动推送也遵守同源策略，换句话说，服务器不能随便将第三方资源推送给客户端，而必须是经过双方确认才行。
+
+- **5. 提高安全性**
+
+出于兼容的考虑，```HTTP/2```延续了```HTTP/1```的“明文”特点，可以像以前一样使用明文传输数据，不强制使用加密通信，不过格式还是二进制，只是不需要解密。
+
+但由于```HTTPS```已经是大势所趋，而且主流的浏览器Chrome、Firefox等都公开宣布只支持加密的```HTTP/2```，所以“事实上”的```HTTP/2```是加密的。也就是说，**互联网上通常所能见到的```HTTP/2```都是使用"https”协议名**，**跑在```TLS```上面**。```HTTP/2```协议定义了两个字符串标识符：“h2"表示加密的```HTTP/2```，“h2c”表示明文的```HTTP/2```。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_11.png?raw=true" />
+</p>
+
+### ```HTTP/3``` 新特性
+
+- **```HTTP/2``` 的缺点**
+
+虽然 ```HTTP/2``` 解决了很多之前旧版本的问题，但是它还是存在一个巨大的问题，主要是底层支撑的 ```TCP``` 协议造成的。
+
+HTTP/2的缺点主要有以下几点：
+
+1. **```TCP``` 以及 ```TCP+TLS```建立连接的延时**
+
+```HTTP/2```都是使用```TCP```协议来传输的，而如果使用```HTTPS```的话，还需要使用```TLS```协议进行安全传输，而使用```TLS```也需要一个握手过程，这样就需要有两个握手延迟过程：
+
+```
+1. 在建立TCP连接的时候，需要和服务器进行三次握手来确认连接成功，也就是说需要在消耗完1.5个RTT之后才能进行数据传输。
+
+2. 进行TLS连接，TLS有两个版本——TLS1.2和TLS1.3，每个版本建立连接所花的时间不同，大致是需要1~2个RTT。
+```
+
+总之，在传输数据之前，我们需要花掉 3～4 个 RTT。
+
+2. **```TCP```的队头阻塞并没有彻底解决**
+
+上文我们提到在```HTTP/2```中，多个请求是跑在一个```TCP```管道中的。**但当出现了丢包时，```HTTP/2``` 的表现反倒不如 ```HTTP/1``` 了**。***因为```TCP```为了保证可靠传输，有个特别的“丢包重传”机制，丢失的包必须要等待重新传输确认，```HTTP/2```出现丢包时，整个 ```TCP``` 都要开始等待重传***，那么就会**阻塞该```TCP```连接中的所有请求**（如下图）。而对于 ```HTTP/1.1``` 来说，可以开启多个 ```TCP``` 连接，出现这种情况反到只会影响其中一个连接，剩余的 ```TCP``` 连接还可以正常传输数据。
+
+> ***队头阻塞问题***
+
+**队头阻塞 Head-of-line blocking（缩写为HOL blocking）** 是计算机网络中是一种性能受限的现象，通俗来说就是：*一个数据包影响了一堆数据包，它不来大家都走不了*。
+
+队头阻塞问题 ***可能存在于HTTP层和TCP层***，在```HTTP1.x```时两个层次都存在该问题。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_12.png?raw=true" />
+</p>
+
+**```HTTP2.0```协议的多路复用机制解决了```HTTP```层的队头阻塞问题，但是在```TCP```层仍然存在队头阻塞问题。**
+
+**```TCP```协议在收到数据包之后，这部分数据可能是乱序到达的，但是```TCP```必须将所有数据收集排序整合后给上层使用，如果其中某个包丢失了，就必须等待重传，从而出现某个丢包数据阻塞整个连接的数据使用**
+
+- **```HTTP/3```简介**
+
+Google 在推```SPDY```的时候就已经意识到了这些问题，于是就另起炉灶搞了一个**基于 ```UDP``` 协议的```“QUIC”```协议**，让```HTTP```跑在```QUIC```上而不是```TCP```上。而这个 **“HTTP over QUIC”就是```HTTP```协议的下一个大版本，```HTTP/3```**。它在```HTTP/2```的基础上又实现了质的飞跃，真正“完美”地解决了“队头阻塞”问题。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_13.png?raw=true" />
+</p>
+
+```QUIC``` 虽然基于 ```UDP```，但是在原本的基础上新增了很多功能，接下来我们重点介绍几个```QUIC```新功能。不过```HTTP/3```目前还处于草案阶段，正式发布前可能会有变动，所以本文尽量不涉及那些不稳定的细节
+
+- **```QUIC```新功能**
+
+上面我们提到```QUIC```基于```UDP```，而```UDP```是“无连接”的，根本就不需要“握手”和“挥手”，所以就比```TCP```来得快。**此外QUIC也实现了可靠传输**，保证数据一定能够抵达目的地。它还引入了类似```HTTP/2```的“流”和“多路复用”，单个“流"是有序的，可能会因为丢包而阻塞，但其他“流”不会受到影响。具体来说QUIC协议有以下特点：
+
+1. 实现了类似TCP的流量控制、传输可靠性的功能。
+
+虽然```UDP```不提供可靠性的传输，但 **```QUIC```在```UDP```的基础之上增加了一层来保证数据可靠性传输**。它提供了数据包重传、拥塞控制以及其他一些```TCP```中存在的特性。
+
+2. 实现了快速握手功能。
+
+由于```QUIC```是基于```UDP```的，所以```QUIC```可以实现使用```0-RTT```或者```1-RTT```来建立连接，这意味着```QUIC```可以用最快的速度来发送和接收数据，这样可以大大提升首次打开页面的速度。```0RTT``` 建连可以说是 ```QUIC``` 相比 ```HTTP2``` 最大的性能优势。
+
+3. 集成了```TLS```加密功能。
+
+目前```QUIC```使用的是```TLS1.3```，相较于早期版本```TLS1.3```有更多的优点，其中最重要的一点是减少了握手所花费的```RTT```个数。
+
+4. 多路复用，彻底解决```TCP```中队头阻塞的问题
+
+和TCP不同，**```QUIC```实现了在同一物理连接上可以有多个独立的逻辑数据流**（如下图）。实现了数据流的单独传输，就解决了```TCP```中队头阻塞的问题。
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/http_14.png?raw=true" />
+</p>
+
+> [**Some ```QUIC``` details**](https://mp.weixin.qq.com/s/TU36OLc5pE-vbsEo0aHZGA)
+
+### **总结**
+
+- ```HTTP/1.1```有两个主要的缺点：安全不足和性能不高。
+
+- ```HTTP/2```完全兼容```HTTP/1```，是“更安全的HTTP、更快的HTTPS"，头部压缩、多路复用等技术可以充分利用带宽，降低延迟，从而大幅度提高上网体验；
+
+- ```QUIC``` 基于 ```UDP``` 实现，是 **```HTTP/3``` 中的底层支撑协议**，该协议基于 ```UDP```，又取了 ```TCP``` 中的精华，实现了即快又可靠的协议。
+
+From: https://mp.weixin.qq.com/s/n8HBG9LuzQjOT__M4pxKwA
+
+## [**SSH**](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/3.%20%E5%9B%BE%E8%A7%A3TCP%20IP/Note.md#ssh)
 
 ## **DNS**
 

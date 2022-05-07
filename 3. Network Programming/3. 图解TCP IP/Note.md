@@ -414,6 +414,10 @@
   <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/79.png?raw=true" />
 </p>
 
+- ***NAT does not usually allow connections to be initiated from outside the network***, although you can manually configure the NAT device to set up server connections. The practical result is that some TCP and UDP protocols that require a connection be initiated from the server machine do not work automatically and some might not work at all.
+
+- NAT provides some **firewall protection**. A standard NAT configuration provides basic-level firewall protection because the NAT device can initiate connections from the private NAT network, but devices on the external network usually cannot initiate connections to the private NAT network.
+
 #### **NAT traversal**
 
 <p align="center">
@@ -659,7 +663,7 @@ Asymmetrical encryption is different from symmetrical encryption because to send
 
 **SSH uses asymmetric encryption in a few different places.** During the ***initial key exchange process*** used to ***set up the symmetrical encryption*** (used to encrypt the session), asymmetrical encryption is used. In this stage, both parties produce *temporary key pairs* and exchange the public key in order to produce the shared secret that will be used for symmetrical encryption.
 
-The more well-discussed use of asymmetrical encryption with SSH comes from ***SSH key-based authentication***. **SSH key pairs can be used to authenticate a client to a server.** The client creates a key pair and then uploads the public key to any remote server it wishes to access. This is placed in a file called authorized_keys within the ~/.ssh directory in the user account’s home directory on the remote server.
+The more well-discussed use of asymmetrical encryption with SSH comes from ***SSH key-based authentication***. **SSH key pairs can be used to authenticate a client to a server.** ***The client creates a key pair and then uploads the public key to any remote server it wishes to access***. This is placed in a file called authorized_keys within the ~/.ssh directory in the user account’s home directory on the remote server.
 
 <p align="center">
   <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/112.png?raw=true" />
@@ -753,3 +757,35 @@ The most popular and recommended alternative is the use of ***SSH key pairs***. 
 In sum, the asymmetry of the keys allows the server to encrypt messages to the client using the public key. The client can then prove that it holds the private key by decrypting the message correctly. The two types of encryption that are used (symmetric shared secret and asymmetric public/private keys) are each able to leverage their specific strengths in this model.
 
 From: https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process
+
+### **FTP** - page. 273
+
+### **E-mail** - page. 277
+
+### **WWW** - page. 277
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/114.png?raw=true" />
+</p>
+
+- **URI**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/115.png?raw=true" />
+</p>
+
+- **HTML**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/116.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/117.png?raw=true" />
+</p>
+
+- **HTTP**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/118.png?raw=true" />
+</p>
