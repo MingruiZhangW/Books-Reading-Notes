@@ -791,3 +791,34 @@ From: https://www.digitalocean.com/community/tutorials/understanding-the-ssh-enc
 </p>
 
 > [Resources](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/Note.md#http--http2--http3)
+
+- **SNMP && MIB && RMON** - page. 293
+
+### **SIP Related**
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/119.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/120.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/121.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/122.png?raw=true" />
+</p>
+
+- **LDAP**
+
+**LDAP (Lightweight Directory Access Protocol)** is a software protocol for enabling anyone to locate data about organizations, individuals and other resources such as files and devices in a network -- whether on the public Internet or on a corporate Intranet. ```LDAP``` is a "lightweight" (smaller amount of code) version of Directory Access Protocol (DAP), which is part of X.500, a standard for directory services in a network.
+
+The common use of ```LDAP``` is to provide a central place for authentication -- meaning it stores usernames and passwords. ```LDAP``` can then be used in different applications or services to validate users with a plugin. As some examples, ***```LDAP``` can be used to validate usernames and passwords with ```Docker```, ```Jenkins```, ```Kubernetes```***, Open VPN and Linux Samba servers. LDAP single sign-on can also be used by system administrators to control access to an LDAP database.
+
+```LDAP``` can also be used to add operations into a directory server database, authenticate -- or bind -- sessions, delete LDAP entries, search and compare entries using different commands, modify existing entries, extend entries, abandon requests or unbind operations.
+
+> Imagine you have a website that has a million registered users with thousands of page requests per second. Without LDAP, every time users click a page, even for static page viewing, you will probably need to interact with your database to validate the user ID and its digital signature for this login session. Obviously, the query to your database for user-validation will become your bottleneck. By using LDAP, you can easily offload the user validation and gain significant performance improvement. Essentially, in this example, LDAP is another optimization layer outside your database to enhance performance, not replacing any database functions.
+
