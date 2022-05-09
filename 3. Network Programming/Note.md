@@ -1498,6 +1498,53 @@ From: https://vincent.bernat.ch/en/blog/2011-ssl-perfect-forward-secrecy <br>
 From: https://robertheaton.com/2014/03/27/how-does-https-actually-work/ <br>
 From: https://www.codenong.com/cs107123938/
 
+## **Cookie**
+
+> ***It remembers stateful information for the stateless ```HTTP``` protocol***
+
+### **Cookie的出现**
+
+浏览器和服务器之间的通信少不了```HTTP```协议，但是**因为```HTTP```协议是无状态**的，所以**服务器并不知道上一次浏览器做了什么样的操作**，这样严重阻碍了交互式Web应用程序的实现。
+
+针对上述的问题，网景公司的程序员创造了```Cookie```。
+
+### **Cookie的传输**
+
+**服务器端**在实现```Cookie```标准的过程中，需要**对任意```HTTP```请求发送```Set-Cookie``` ```HTTP```头作为响应**的一部分：
+
+```
+Set-Cookie: name=value; expires=Tue, 03-Sep-2019 14:10:21 GMT; path=/; domain=.xxx.com;
+```
+
+**浏览器端**会**存储**这样的```Cookie```，并**且为之后的每个请求添加```Cookie``` ```HTTP```请求头发送回服务器**：
+
+```
+Cookie: name=value
+```
+
+**服务器**通过**验证```Cookie```值**，来**判断浏览器发送请求属于哪一个用户**。
+
+An ```HTTP``` cookie (```web cookie, browser cookie```) is a small piece of data that **a server sends to a user's web browser**. The **browser may store the cookie and send it back to the same server with later requests**. Typically, an ```HTTP``` ```cookie``` is used to tell **if two requests come from the same browser** — ***keeping a user logged in***, for example. ***It remembers stateful information for the stateless ```HTTP``` protocol***.
+
+```Cookies``` are mainly used for three purposes:
+
+- **Session management**
+
+Logins, shopping carts, game scores, or anything else the server should remember
+
+- **Personalization**
+
+User preferences, themes, and other settings
+
+- **Tracking**
+
+Recording and analyzing user behavior
+
+```Cookies``` were once used for general client-side storage. While this made sense when they were the only way to store data on the client, modern storage APIs are now recommended. ***```Cookies``` are sent with every request***, so they can worsen performance (especially for mobile data connections). Modern APIs for client storage are the Web Storage API (localStorage and sessionStorage) and IndexedDB.
+
+From: https://mp.weixin.qq.com/s/u9aU2s-m3iqkKrwLGp266Q <br>
+From: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
 ## [**SSH**](https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/3.%20Network%20Programming/3.%20%E5%9B%BE%E8%A7%A3TCP%20IP/Note.md#ssh)
 
 ## **DNS**
