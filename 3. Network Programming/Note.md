@@ -1667,6 +1667,62 @@ From: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
 
 From: https://mp.weixin.qq.com/s/JQE4iIFy5I4bDtAegZULWg
 
+## **Message Digest Algorithm**
+
+在处理密码加密时，不可以使用加密算法，因为所有的加密算法都是可以逆向运算的，也就是说，只要能够获取加密算法的类型、加密过程中使用的参数，就可以逆向运算，根据密文得到原文，所以，加密算法主要用于保证传输过程的数据安全，并不用能于长期存储的密码！
+
+一般，***会使用消息摘要算法来实现密码加密***！
+
+> **这种算法是根据“消息”计算得到“摘要”的算法，通常用于数据验证，即发送方和接收方的数据是否完全一致，例如下载文件、发送消息等。**
+
+- 消息摘要算法具备几个特点：
+
+```
+  1. 消息相同，则摘要必然相同；
+  2. 在算法不变的情况下，摘要的长度是固定的；
+  3. 消息不同，则摘要几乎不会相同。
+```
+> **由于一般的消息摘要算法都是128位或以上位数的算法，发生碰撞（不同的消息却对应相同的摘要）的概念非常低，并且，在应用于密码加密时，由于密码的原文的长限是非常有限的，更加降低了发生碰撞的概率，所以，使用消息摘要算法对密码作加密处理是完全没有问题的！**
+
+假设用户注册的原始密码是```1234```，通过消息摘要算法得到的是```81dc9bdb52d04dc20036dbd8313ed055```，就应该把这个摘要结果存储到数据库中，下次，用户尝试登录，如果输入的仍是```1234```，基于“消息相同，摘要一定相同”，使用同样的算法，得到的一定是```81dc9bdb52d04dc20036dbd8313ed055```，与数据库中存储的进行对比，是一致的，就允许登录，当然，用户登录时，如果输入的不是```1234```，则几乎不可能得到以上的摘要数据，与数据库中存储的摘要进行对比结果就不一致，则不允许登录！
+
+> ***常见的消息摘要算法有```SHA```系列的和```MD```系列的，在这2个系列中，常用的有```SHA-256```、```SHA-384```、```SHA-512```、```MD5```。***
+
+- **消息摘要算法也是存在“破解”的**
+
+以```MD5```算法为例，它是128位的算法，理论上来说，发生碰撞的概念就是2的128次方分之一，如果实际发生碰撞的概率比这大得多，甚至找到了相关的算法支撑，则这种消息摘要算法就被理解为“破解”了！
+
+> ***消息摘要算法是无法通过摘要进行逆向运算得到消息原文的！***
+
+### **Salt value** (盐值)
+
+Here is an *incomplete example* of a salt value for storing passwords. This first table has two username and password combinations. The password is not stored.
+
+| Username  | Password  |
+|---|---|
+|  user1 |  password123 |
+|  user2 |  password123 |
+
+***The salt value is generated at random*** and can be any length; in this case the salt value is 8 bytes long. The salt value is appended to the plaintext password and then the result is hashed, which is referred to as the hashed value. Both the salt value and hashed value are stored.
+
+|  Username | Salt value  |  String to be hashed | Hashed value = ```SHA256``` (Password + Salt value)  |
+|---|---|---|---|
+| user1  | E1F53135E559C253  |  password123E1F53135E559C253 | 72AE25495A7981C40622D49F9A52E4F1565C90F048F59027BD9C8C8900D5C3D8  |
+|  user2 | 84B03D034B409D4E  |  password12384B03D034B409D4E | B4B6603ABC670967E99C7E7F1389E40CD16E78AD38EB1468EC2AA1E62B8BED3A  |
+
+As the table above illustrates, **different salt values will create completely different hashed values**, even when the plaintext passwords are exactly the same. Additionally, dictionary attacks are mitigated to a degree as an attacker cannot practically precompute the hashes. However, a salt cannot protect common or easily guessed passwords.
+
+***Without a salt, the hashed value is the same for all users that have a given password, making it easier for hackers to guess the password from the hashed value:***
+
+| Username  | String to be hashed  | Hashed value = ```SHA256```  |
+|---|---|---|
+|  user1 |  password123 | 57DB1253B68B6802B59A969F750FA32B60CB5CC8A3CB19B87DAC28F541DC4E2A  |
+|  user2 | password123  | 57DB1253B68B6802B59A969F750FA32B60CB5CC8A3CB19B87DAC28F541DC4E2A  |
+
+- ***If a salt is too short, an attacker may precompute a table of every possible salt appended to every likely password. Using a long salt ensures such a table would be prohibitively large.***
+
+From: https://blog.csdn.net/zhangxuelong461/article/details/104450284
+
 ## **IO 多路复用** && **同步阻塞网络 IO**
 
 From: https://mp.weixin.qq.com/s/3gC-nUnFGv-eoSBsEdSZuA <br/>
