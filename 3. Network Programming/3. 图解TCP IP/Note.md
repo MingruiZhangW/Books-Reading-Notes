@@ -822,3 +822,48 @@ The common use of ```LDAP``` is to provide a central place for authentication --
 
 > Imagine you have a website that has a million registered users with thousands of page requests per second. Without LDAP, every time users click a page, even for static page viewing, you will probably need to interact with your database to validate the user ID and its digital signature for this login session. Obviously, the query to your database for user-validation will become your bottleneck. By using LDAP, you can easily offload the user validation and gain significant performance improvement. Essentially, in this example, LDAP is another optimization layer outside your database to enhance performance, not replacing any database functions.
 
+## 9. Web Security Basics
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/123.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/124.png?raw=true" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/125.png?raw=true" />
+</p>
+
+### **VPN and IP Sec**
+
+- **A ```VPN``` can hide information about your IP address and allow you to go online anonymously**.
+
+> **A ```VPN``` works by encrypting your communications on whatever device you’re using, including phone, laptop, or tablet. It sends your data through a secure tunnel to the ```VPN``` service provider’s servers. Your data is encrypted and rerouted to whatever site you’re trying to reach.**
+
+> It allows you to use inherently non-private public Wi-Fi by creating an encrypted tunnel through which your data is sent to a remote server operated by your ```VPN``` service provider. The ```VPN``` server then sends the data to the site you’re seeking to connect with, encrypted and safe from the prying eyes of hackers and other cybercriminals.
+
+```VPN```s can sometimes slow your computer’s performance. That can happen if the ```VPN```’s servers are geographically distant. For best performance, consider a ```VPN``` with servers located around the world. That way, your data can be routed through a closer location.
+
+Some ```VPN``` services limit your usage. For instance, they may limit the amount of data you can send in a single connection, over a period of time, or limit the speed of the data. This can be common with free ```VPN``` services.
+
+- Types of ```VPN``` security protocols
+
+```VPN```s use a variety of different protocols. Older protocols, such as PPP and PPTP, are considered less secure. Here are some of the types of security protocols.
+
+**IP Security (IP Sec).** Internet Protocol Security is a popular protocol that protects data through either a transport mode or a tunnel mode. Both provide encryption. It’s considered highly secure and is useful for securing inbound and outbound traffic. But it can require a lot of processing power, and that can affect device performance. Also, some of the security algorithms used in IPSec in the past have been hacked by cybercriminals. Newer versions of IPSec use stronger, more complex algorithms.
+
+**Layer 2 Tunneling Protocol (L2TP)/IPSec.** L2TP is a ```VPN``` protocol that doesn’t encrypt data by itself. That’s why it’s paired with IPSec encryption. One of its primary advantages? It’s available on most devices and operating systems and provides a high level of security. The downside? It can result in slower connections. That’s because it uses the double encapsulation process.
+
+**Secure Sockets Layer (SSL) and Transport Layer Security (TLS)**. SSL was the encryption protocol ```VPN```s generally used before 2015. It has evolved into TLS for encryption of data traveling to an SSL ```VPN``` server. One of the reasons that SSL has been largely replaced in ```VPN```s is due to the large number of vulnerabilities discovered in the protocol.
+
+**Point-to-Point Tunneling Protocol (PPTP)**. PPTP was the earliest of security protocols and first released in Windows 95. It’s fast, but that’s because the protocol provides a low level of encryption.
+
+**Secure Shell (SSH)**. The SSH protocol isn’t considered especially user-friendly and doesn’t automatically encrypt all of your data. It’s more difficult for users to configure. Plus, fewer providers use this protocol, which limits your choices. 
+
+**Secure Socket Tunneling Protocol (SSTP)**. This Microsoft-developed protocol is considered highly secure and easy to use, but it doesn’t work as well on platforms other than Windows.
+
+**Internet Key Exchange, Version 2 (IKEv2)**. This protocol is based upon IPSec. It’s considered quite secure and fast. One downside? It can be blocked by firewalls.
+
+**Open VPN**. This is perhaps the most popular ```VPN``` protocol. It combines high security and speed. Because it’s open source, numerous third parties maintain and update the technology. 
