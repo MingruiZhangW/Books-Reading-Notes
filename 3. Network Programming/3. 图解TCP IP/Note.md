@@ -867,3 +867,5 @@ Some ```VPN``` services limit your usage. For instance, they may limit the amoun
 **Internet Key Exchange, Version 2 (IKEv2)**. This protocol is based upon IPSec. It’s considered quite secure and fast. One downside? It can be blocked by firewalls.
 
 **Open VPN**. This is perhaps the most popular ```VPN``` protocol. It combines high security and speed. Because it’s open source, numerous third parties maintain and update the technology. 
+
+From: https://au.norton.com/internetsecurity-wifi-how-does-a-vpn-work.html#:~:text=A%20VPN%20works%20by%20encrypting,you're%20trying%20to%20reach.

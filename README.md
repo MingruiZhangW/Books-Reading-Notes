@@ -2,22 +2,23 @@
 
 ## Potential Reading Orders
 
-```图解TCP IP```
+```图解TCP IP``` :white_check_mark:
 
-```现代操作系统：原理与实现```
+```现代操作系统：原理与实现``` :x:
 
-```C++ Basics```
+```C++ Basics``` :x:
 
-```程序员自我修养```
+```程序员自我修养``` :x:
 
-```C++ Templates```
+```C++ Templates``` :x:
 
-```C++ 服务器开发精髓```
+```C++ 服务器开发精髓``` :x:
 
-```System Design```
+```System Design``` :x:
 
-```Modern C++ Design```
+```Modern C++ Design``` :x:
 
-```STL 源码剖析```
+```STL 源码剖析``` :x:
 
 > 算法穿插 - 每周至少两道题
+> 计算机网络编程 :x:
