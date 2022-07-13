@@ -661,3 +661,7 @@ From: https://www.zhihu.com/question/29987589/answer/1483744520
 
 From: https://www.zhihu.com/question/389546003/answer/1194780618 <br/>
 From: https://www.zhihu.com/question/29251261/answer/1297439131
+
+## **What does auto&& tell us?**
+
+From: https://stackoverflow.com/questions/13230480/what-does-auto-tell-us
