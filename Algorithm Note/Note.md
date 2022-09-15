@@ -381,13 +381,290 @@ public:
 };
 ```
 
-## [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
+## Two Pointers
 
-## Two sum O(n)
+<p align="center">
+  <img src="imgs/28.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/27.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<int> sortedSquares(vector<int>& nums) {
+        int pointerNeg {0};
+        int pointerPos {static_cast<int>(nums.size()) - 1};
+        int pointerResultPos{static_cast<int>(nums.size()) - 1};
+        
+        vector<int> result;
+        result.resize(nums.size());
+        
+        for(int i = 0; i < nums.size(); i ++) {
+            if (pointerPos > pointerNeg) {
+                if (pow(nums[pointerPos], 2) >= pow(nums[pointerNeg], 2)) {
+                    result[pointerResultPos] = pow(nums[pointerPos], 2);
+                    pointerPos = pointerPos - 1;
+                } else {
+                    result[pointerResultPos] = pow(nums[pointerNeg], 2);
+                    pointerNeg = pointerNeg + 1;
+                }
+            } else if (pointerPos == pointerNeg) {
+                    result[pointerResultPos] = pow(nums[pointerNeg], 2);
+            }
+            
+            pointerResultPos = pointerResultPos - 1;
+        }
+                    
+        return result;
+    }
+};
+```
+
+- Three step rotation
+
+<p align="center">
+  <img src="imgs/29.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    // Three step rotate
+    // 1,2,3,4 | 5,6,7
+    // 4,3,2,1 | 7,6,5
+    // 5,6,7,1 | 2,3,4
+    void rotate(vector<int>& nums, int k) {
+        if (k == nums.size())
+            return;
+        
+        int kMod = k % nums.size();
+        int rotateMidPos{static_cast<int>(nums.size()) - kMod};
+        
+        // left rotate two pointer
+        int leftRotateLeftPos{0};
+        int leftRotateRightPos{rotateMidPos - 1};
+        
+        // right rotate two pointer
+        int rightRotateLeftPos{rotateMidPos};
+        int rightRotateRightPos{static_cast<int>(nums.size()) - 1};
+        
+        // mid rotate two pointer
+        int midRotateLeftPos{0};
+        int midRotateRightPos{static_cast<int>(nums.size()) - 1};
+        
+        while(leftRotateLeftPos < leftRotateRightPos) {
+            auto temp = nums[leftRotateRightPos];
+            nums[leftRotateRightPos] = nums[leftRotateLeftPos];
+            nums[leftRotateLeftPos] = temp;
+            
+            leftRotateLeftPos ++;
+            leftRotateRightPos --;
+        }
+        
+        while(rightRotateLeftPos < rightRotateRightPos) {
+            auto temp = nums[rightRotateRightPos];
+            nums[rightRotateRightPos] = nums[rightRotateLeftPos];
+            nums[rightRotateLeftPos] = temp;
+            
+            rightRotateLeftPos ++;
+            rightRotateRightPos --;
+        }
+        
+        while(midRotateLeftPos < midRotateRightPos) {
+            auto temp = nums[midRotateRightPos];
+            nums[midRotateRightPos] = nums[midRotateLeftPos];
+            nums[midRotateLeftPos] = temp;
+            
+            midRotateLeftPos ++;
+            midRotateRightPos --;
+        }
+    }
+};
+```
+
+- Two sum O(n)
 
 <p align="center">
   <img src="imgs/1.png" />
 </p>
+
+> Sort + Two Pointer -> Sort : O(nlogn), Two Pointer O(n)
+
+<p align="center">
+  <img src="imgs/30.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/31.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        int pointerLeft {0};
+        int pointerRight {static_cast<int>(numbers.size()) - 1};
+        
+        for (int i = 0; i < numbers.size(); i ++) {
+            auto val = numbers[pointerLeft] + numbers[pointerRight];
+            if (val > target)
+                pointerRight --;
+            else if (val == target)
+                return {pointerLeft + 1, pointerRight + 1};
+            else
+                pointerLeft ++;
+        }
+        
+        return {};
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/32.png" />
+</p>
+
+- Three sum O(n(n-1)) = O(n^2)
+
+<p align="center">
+  <img src="imgs/33.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    /**
+     * @param numbers: Give an array numbers of n integer
+     * @return: Find all unique triplets in the array which gives the sum of zero.
+     *          we will sort your return value in output
+     */
+    vector<vector<int>> threeSum(vector<int> &numbers) {
+        vector<vector<int>> result;
+
+        // Need to be sorted to use two pointer
+        sort(numbers.begin(), numbers.end());
+
+        for (int i = 0; i < numbers.size(); i ++) {
+            // Avoid duplicate
+            if (i != 0 && numbers[i] == numbers[i - 1])
+                continue;
+
+            auto twoSumResult = twoSum(numbers, i, -numbers[i]);
+
+            if (twoSumResult.size() > 0) {
+                for(auto j : twoSumResult) {
+                    j.push_back(numbers[i]);
+                    result.push_back(j);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    vector<vector<int>> twoSum(vector<int> &numbers,
+                               int ignoreIndex,
+                               int target) {
+        // Two sum starts at ignoreIndex, anything before are not needed
+        int leftPos {ignoreIndex};
+        int rightPos {static_cast<int>(numbers.size()) - 1};
+
+        vector<vector<int>> result;
+
+        while(leftPos < rightPos) {
+            auto val = numbers[leftPos] + numbers[rightPos];
+            if (val > target)
+                rightPos --;
+            else if (val < target)
+                leftPos ++;
+            else {
+                result.push_back({numbers[leftPos], numbers[rightPos]});
+
+                // Avoid duplicate
+                auto resultLeft = numbers[leftPos];
+                auto resultRight = numbers[rightPos];
+
+                while (leftPos < rightPos && numbers[leftPos] == resultLeft) {
+                    leftPos ++;
+                }
+
+                while (leftPos < rightPos && numbers[rightPos] == resultRight) {
+                    rightPos --;
+                }
+            }
+        }
+
+        return result;
+    }
+};
+```
+
+- Quick select
+
+<p align="center">
+  <img src="imgs/34.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/35.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        // Use n - k to find the smallest n - k element
+        // -> k th largest element
+        return partition(nums, 0, 
+                         static_cast<int>(nums.size() - 1), 
+                         static_cast<int>(nums.size() - k));
+    }
+    
+    int partition(vector<int>& nums, int start, 
+                   int end, int k) {
+        int left = start, right = end;
+        int pivot = nums[left + (right - left) / 2];
+            
+        cout << pivot << endl;
+
+        // Need to consider = case
+        // consider 3, 5, 6, 4
+        // 5 as the pivot
+        while(left <= right) {
+            while (left <= right && nums[left] < pivot) {
+                left ++;
+            }
+            
+            while (left <= right && nums[right] > pivot) {
+                right --;
+            }
+            
+            if (left <= right) {
+                auto temp = nums[right];
+                nums[right] = nums[left];
+                nums[left] = temp;
+                
+                left ++;
+                right --;
+            }
+        }
+
+        // Right's value is always greater than left by one
+        // So. right -> left side,
+        //     left  -> right side
+        if (right >= k)
+            return partition(nums, start, right, k);
+        if (left <= k)
+            return partition(nums, left, end, k);
+        return nums[k];
+    }
+};
+```
+
+## [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
 
 ## **Ring Buffer**
 

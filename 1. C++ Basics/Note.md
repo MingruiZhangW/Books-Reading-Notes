@@ -1,5 +1,13 @@
 # C++ Basics
 
+<p align="center">
+  <img src="imgs/155.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/156.png" />
+</p>
+
 - [Source](https://www.learncpp.com/)
 
 ## [Compiler vs Interpreter](https://stackoverflow.com/questions/38491212/difference-between-compiled-and-interpreted-languages/38491646#38491646)
@@ -10,6 +18,13 @@
 
 <p align="center">
   <img src="imgs/2.png" />
+</p>
+
+- For Java(interpreting), it runs the executable on JVM (virtual machine)
+- Java use Just-in-time compilation (Jit)
+
+<p align="center">
+  <img src="imgs/157.png" />
 </p>
 
 ## [Uninitialized variables and undefined behavior](https://www.learncpp.com/cpp-tutorial/uninitialized-variables-and-undefined-behavior/)
@@ -575,6 +590,184 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
 <p align="center">
   <img src="imgs/114.png" />
 </p>
+
+- Stack - function calls 
+
+## [lvalues and rvalues](https://www.learncpp.com/cpp-tutorial/value-categories-lvalues-and-rvalues/)
+
+<p align="center">
+  <img src="imgs/115.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/116.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/117.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/118.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/119.png" />
+</p>
+
+- [Lvalue references](https://www.learncpp.com/cpp-tutorial/lvalue-references/)
+
+<p align="center">
+  <img src="imgs/120.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/121.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/122.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/123.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/124.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/125.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/126.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/127.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/128.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/129.png" />
+</p>
+
+- [Pass by lvalue Reference](https://www.learncpp.com/cpp-tutorial/pass-by-lvalue-reference/)
+
+<p align="center">
+  <img src="imgs/130.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/131.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/132.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/133.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/134.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/135.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/136.png" />
+</p>
+
+- [R Value Reference](https://www.learncpp.com/cpp-tutorial/rvalue-references/)
+
+<p align="center">
+  <img src="imgs/146.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/147.png" />
+</p>
+
+## [Pointers](https://www.learncpp.com/cpp-tutorial/introduction-to-pointers/)
+
+<p align="center">
+  <img src="imgs/137.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/138.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/139.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/140.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/141.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/142.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/143.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/144.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/145.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/148.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/149.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/150.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/151.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/152.png" />
+</p>
+
+- Const Pointer & Pointer to Const
+
+<p align="center">
+  <img src="imgs/153.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/154.png" />
+</p>
+
+- [Pass by Address](https://www.learncpp.com/cpp-tutorial/pass-by-address/)
+
+
 
 ## **图解 Git 工作原理**
 
