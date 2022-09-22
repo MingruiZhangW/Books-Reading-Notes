@@ -8,6 +8,26 @@
   <img src="imgs/156.png" />
 </p>
 
+- Memory Hierarchy
+
+<p align="center">
+  <img src="imgs/158.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/161.png" />
+</p>
+
+- Least Recently Used (LRU Cache)
+
+<p align="center">
+  <img src="imgs/159.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/160.png" />
+</p>
+
 - [Source](https://www.learncpp.com/)
 
 ## [Compiler vs Interpreter](https://stackoverflow.com/questions/38491212/difference-between-compiled-and-interpreted-languages/38491646#38491646)
@@ -767,7 +787,109 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
 
 - [Pass by Address](https://www.learncpp.com/cpp-tutorial/pass-by-address/)
 
+<p align="center">
+  <img src="imgs/162.png" />
+</p>
 
+<p align="center">
+  <img src="imgs/163.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/164.png" />
+</p>
+
+> Prefer pass by (const) reference
+
+<p align="center">
+  <img src="imgs/165.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/166.png" />
+</p>
+
+- [Return by reference and return by address](https://www.learncpp.com/cpp-tutorial/return-by-reference-and-return-by-address/)
+
+<p align="center">
+  <img src="imgs/167.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/168.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/169.png" />
+</p>
+
+## Scoped enumerations (enum classes)
+
+<p align="center">
+  <img src="imgs/170.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/171.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/172.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/173.png" />
+</p>
+
+## Struct
+
+<p align="center">
+  <img src="imgs/174.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/175.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/176.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/177.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/178.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/179.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/180.png" />
+</p>
+
+- Struct size and data structure alignment
+
+<p align="center">
+  <img src="imgs/181.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/182.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/183.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/184.png" />
+</p>
+
+> [Class template argument deduction (CTAD) and deduction guides](https://www.learncpp.com/cpp-tutorial/class-template-argument-deduction-ctad-and-deduction-guides/)
 
 ## **图解 Git 工作原理**
 

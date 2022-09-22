@@ -353,6 +353,8 @@ public:
 
 > [Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/)
 
+- **Inorder traverse to get sorted array is not enough!!!**
+
 ```c++
 class Solution {
 public:
@@ -379,6 +381,64 @@ public:
         return isValidBSTDivCon(root).first;
     }
 };
+```
+
+- [Sorted Array to Balanced BST](https://www.geeksforgeeks.org/sorted-array-to-balanced-bst/)
+- [Convert a normal BST to Balanced BST](https://www.geeksforgeeks.org/convert-normal-bst-balanced-bst/)
+
+<p align="center">
+  <img src="imgs/37.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/36.png" />
+</p>
+
+```py
+from math import log2
+
+# The idea is to find the middle element of the array and make it the root of the tree,
+# then perform the same operation on the left subarray for the root’s left child
+# and the same operation on the right subarray for the root’s right child.
+def constructBBST(nodeList, insertIndex, resultList, maxListLen):
+    # Stop condition
+    if insertIndex > maxListLen - 1 or len(nodeList) == 0:
+        return
+
+    midIndex = int(len(nodeList) / 2)
+    midNode = nodeList[midIndex]
+    # If the resultList has less element to hold the node, append -1 up to the index pos
+    if insertIndex > len(resultList) - 1:
+        for i in range(insertIndex - len(resultList) + 1):
+            resultList.append(-1)
+    resultList[insertIndex] = midNode
+
+    # Left
+    constructBBST(nodeList[0:midIndex], 2 * insertIndex + 1, resultList, maxListLen)
+    # Right
+    constructBBST(nodeList[midIndex + 1:len(nodeList)], 2 * insertIndex + 2, resultList, maxListLen)
+
+
+
+def optbst(t):
+    validNodesList = []
+    resultList = []
+
+    for node in t:
+        if node != -1:
+            validNodesList.append(node)
+
+    # Find out maximum length for recursion stop condition
+    validHeight = int(log2(len(validNodesList)))
+    maxListLen = (2 ** (validHeight + 1)) - 1
+
+    # Need to sort the list to use constructBBST
+    validNodesList.sort()
+
+    # Recursion construct BBST
+    constructBBST(validNodesList, 0, resultList, maxListLen)
+
+    return resultList
 ```
 
 ## Two Pointers
@@ -602,7 +662,7 @@ public:
 };
 ```
 
-- Quick select
+- [Quick select](https://www.geeksforgeeks.org/quickselect-algorithm/)
 
 <p align="center">
   <img src="imgs/34.png" />
@@ -660,6 +720,201 @@ public:
         if (left <= k)
             return partition(nums, left, end, k);
         return nums[k];
+    }
+};
+```
+> Better Partition
+
+```c++
+// Standard partition process of QuickSort().
+// It considers the last element as pivot
+// and moves all smaller element to left of
+// it and greater elements to right
+int partition(int arr[], int l, int r)
+{
+    int x = arr[r], i = l;
+    for (int j = l; j <= r - 1; j++) {
+      // When smaller, i and j grows together,
+      // When larger j grows until find the first smaller element
+      // swap with i, i++
+        if (arr[j] <= x) {
+            swap(arr[i], arr[j]);
+            i++;
+        }
+    }
+    swap(arr[i], arr[r]);
+    return i;
+}
+```
+
+- Middle of the Linked List (Fast and Slow Pointer)
+
+<p align="center">
+  <img src="imgs/38.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while(fast->next != NULL){
+            fast = fast->next;
+            slow = slow->next;
+            if(fast->next != NULL)
+                fast = fast->next;
+        }
+        return slow;
+    }
+};
+```
+
+- Remove Nth Node From End of List
+
+<p align="center">
+  <img src="imgs/39.png" />
+</p>
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        if (head->next == nullptr)
+            return nullptr;
+        
+        // Tail
+        ListNode* endPtr {nullptr};
+        // Ptr to remove needed element
+        ListNode* removePtr {nullptr};
+        // Ptr to the element before the remove needed element
+        ListNode* removePPtr {nullptr};
+        int counter {0};
+        
+        endPtr = head;
+        removePtr = head;
+        removePPtr = head;
+        
+        // Move the removePtr once the counter hit the condition
+        // Eventually, when the tail hits the end,
+        // removePtr should be the nth element from the end of the list 
+        while (endPtr->next != nullptr) {
+            counter ++;
+            
+            endPtr = endPtr->next;
+            if (counter >= n)
+                removePtr = removePtr->next;
+            if (counter > n)
+                removePPtr = removePPtr->next;
+        }
+        
+        // Corner case for [1,2] n = 2 (remove the head)
+        if (counter < n)
+            return head->next;
+        
+        removePtr = removePtr->next;
+        removePPtr->next = removePtr;
+        
+        return head;
+    }
+};
+```
+
+## BFS - Breadth First Search
+
+<p align="center">
+  <img src="imgs/40.png" />
+</p>
+
+> Queue
+
+<p align="center">
+  <img src="imgs/41.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/42.png" />
+</p>
+
+- [Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)
+
+<p align="center">
+  <img src="imgs/43.png" />
+</p>
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        // Return for empty root
+        if (!root)
+            return {};
+        
+        // Result vec
+        vector<vector<int>> result;
+        // BFS Queuq
+        queue<TreeNode*> bfsQueue;
+        
+        // Push root in as initial state
+        bfsQueue.push(root);
+        
+        // Queque will deal with one level per loop,
+        // it will pop out the level nodes in one loop,
+        // and get the next level nodes in, when there are
+        // no other nodes, kill the loop
+        while(bfsQueue.size() != 0) {
+            
+            // Current level node result
+            vector<int> levelVector {};
+            
+            // !!!!!!!!!!!!!!!!
+            // Current leel size!!!!!
+            // This is important to keep track of how many nodes per level!!!!!!
+            // !!!!!!!!!!!!!!!!
+            int currentLevelSize = bfsQueue.size();
+            
+            // Loop the current level,
+            // Push in the next level node,
+            // pop out the current level node 
+            for (int i = 0; i < currentLevelSize; i ++) {
+                auto currentNode = bfsQueue.front();
+                
+                levelVector.push_back(currentNode->val);
+                
+                bfsQueue.pop();
+                
+                if (currentNode->left)
+                    bfsQueue.push(currentNode->left);
+                if (currentNode->right)
+                    bfsQueue.push(currentNode->right);
+            }
+            
+            // Push level result in final result
+            result.push_back(levelVector);
+        }
+        
+        return result;
     }
 };
 ```
