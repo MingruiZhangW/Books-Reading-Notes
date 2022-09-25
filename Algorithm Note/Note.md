@@ -830,7 +830,7 @@ public:
 };
 ```
 
-## BFS - Breadth First Search
+## **BFS - Breadth First Search - Queue**
 
 <p align="center">
   <img src="imgs/40.png" />
@@ -913,6 +913,749 @@ public:
             // Push level result in final result
             result.push_back(levelVector);
         }
+        
+        return result;
+    }
+};
+```
+
+- Serialization
+
+<p align="center">
+  <img src="imgs/44.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/45.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/47.png" />
+</p>
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    // Assume null to be -1 in string
+    string serialize(TreeNode* root) {
+        if (!root)
+            return {};
+        
+        string result;
+        queue<TreeNode*> bfsQueue;
+        
+        bfsQueue.push(root);
+        
+        while(bfsQueue.size() > 0) {
+            string currentLevel {};
+            auto currentBFSLevelSize = bfsQueue.size();
+            
+            bool allNull {true};
+            for (int i = 0; i < currentBFSLevelSize; i++) {
+                auto queueFront = bfsQueue.front();
+                
+                if (!queueFront)
+                    currentLevel = currentLevel + "-1_";
+                else {
+                    allNull = false;
+                    
+                    currentLevel = currentLevel + to_string(queueFront->val) + "_";
+                        
+                    if (queueFront->left != nullptr)
+                        bfsQueue.push(queueFront->left);
+                    else
+                        bfsQueue.push(nullptr);
+
+                    if (queueFront->right != nullptr)
+                        bfsQueue.push(queueFront->right);
+                    else
+                        bfsQueue.push(nullptr);
+                }
+
+                bfsQueue.pop();
+            }
+            
+            if (!allNull)
+                result = result + currentLevel;
+        }
+        
+        return result;
+    }
+
+    // Decodes your encoded data to tree.
+    // Assume null to be -1 in string 
+    TreeNode* deserialize(string data) {
+        if (data.size() == 0)
+            return nullptr;
+
+        TreeNode* root = new TreeNode(-1);
+        int stringDataIndex {0};
+        int stringDataSubIndex {0};
+        int stringMaxIndex {static_cast<int>(data.size() - 1)};
+        queue<TreeNode*> bfsQueue;
+        
+        // Init
+        while (data[stringDataIndex] != '_')
+            stringDataIndex ++;
+        root->val = stoi(data.substr(stringDataSubIndex, stringDataIndex - stringDataSubIndex));
+        stringDataIndex ++;
+        stringDataSubIndex = stringDataIndex;
+        
+        bfsQueue.push(root);
+        
+        while(bfsQueue.size() > 0) {
+            auto currentLevelSize = bfsQueue.size();
+            
+            for (int i = 0; i < currentLevelSize; i ++) {
+                auto currentItem = bfsQueue.front();
+                bfsQueue.pop();
+
+                if (stringDataIndex <= stringMaxIndex) {
+                    if (data[stringDataIndex] == '-') {
+                        currentItem->left = nullptr;
+                        stringDataIndex = stringDataIndex + 3;
+                        stringDataSubIndex = stringDataIndex;
+                    } else {
+                        while (data[stringDataIndex] != '_')
+                            stringDataIndex ++;
+
+                        if (data[stringDataIndex] == '_') {
+                            TreeNode* item = new TreeNode(stoi(data.substr(stringDataSubIndex, 
+                                                                           stringDataIndex - stringDataSubIndex)));
+                            bfsQueue.push(item);
+                            currentItem->left = item;
+                            stringDataIndex = stringDataIndex + 1;
+                            stringDataSubIndex = stringDataIndex;
+                        }
+                    }
+                    
+                    if (data[stringDataIndex] == '-') {
+                        currentItem->right = nullptr;
+                        stringDataIndex = stringDataIndex + 3;
+                        stringDataSubIndex = stringDataIndex;
+                    } else {
+                        while (data[stringDataIndex] != '_')
+                            stringDataIndex ++;
+
+                        if (data[stringDataIndex] == '_') {
+                            TreeNode* item = new TreeNode(stoi(data.substr(stringDataSubIndex, 
+                                                                           stringDataIndex - stringDataSubIndex)));
+                            bfsQueue.push(item);
+                            currentItem->right = item;
+                            stringDataIndex = stringDataIndex + 1;
+                            stringDataSubIndex = stringDataIndex;
+                        }
+                    }
+                }
+            }
+        }
+
+        return root;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec* ser = new Codec();
+// Codec* deser = new Codec();
+// string tree = ser->serialize(root);
+// TreeNode* ans = deser->deserialize(tree);
+// return ans;
+```
+
+<p align="center">
+  <img src="imgs/46.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        if (grid[0].size() <= 0)
+            return 0;
+        
+        int result {0};
+        vector<vector<bool>> islandIndexSet;
+        queue<pair<int,int>> bfsQueue;
+        
+        // Set up map for iterated elements
+        // Cannot use string set since string might collide
+        islandIndexSet.resize(grid.size());
+        for (int i = 0; i < grid.size(); i ++) {
+            islandIndexSet[i].resize(grid[0].size());
+            for (int j = 0; j < grid[0].size(); j ++) {
+                islandIndexSet[i][j] = false;
+            }
+        }
+        
+        // Double for loop to go over the island
+        for (int i = 0; i < grid.size(); i ++) {
+            for (int j = 0; j < grid[0].size(); j ++) {
+                
+                // BFS on the island land that is not recorded
+                if (grid[i][j] == 1 && islandIndexSet[i][j] == false) {
+                    
+                    int tempResult {1};
+                    islandIndexSet[i][j] = true;
+                    bfsQueue.push({i, j});
+                    
+                    // BFS here no need to record per level
+                    while(bfsQueue.size() > 0) {
+                        auto currentIndex = bfsQueue.front();
+                        bfsQueue.pop();
+
+                        // Top
+                        if (currentIndex.first - 1 >= 0 &&
+                            !islandIndexSet[currentIndex.first - 1][currentIndex.second] &&
+                            grid[currentIndex.first - 1][currentIndex.second] == 1) {
+                            tempResult ++;
+                            
+                            islandIndexSet[currentIndex.first - 1][currentIndex.second] = true;
+                            bfsQueue.push({currentIndex.first - 1, currentIndex.second});
+                        }
+                        
+                        // Bottom
+                        if (currentIndex.first + 1 < grid.size() &&
+                            !islandIndexSet[currentIndex.first + 1][currentIndex.second] &&
+                            grid[currentIndex.first + 1][currentIndex.second] == 1) {
+                            tempResult ++;
+                            
+                            islandIndexSet[currentIndex.first + 1][currentIndex.second] = true;
+                            bfsQueue.push({currentIndex.first + 1, currentIndex.second});
+                        }
+                        
+                        // Left
+                        if (currentIndex.second - 1 >= 0 &&
+                            ! islandIndexSet[currentIndex.first][currentIndex.second - 1] &&
+                            grid[currentIndex.first][currentIndex.second - 1] == 1) {
+                            tempResult ++;
+                            
+                            islandIndexSet[currentIndex.first][currentIndex.second - 1] = true;
+                            bfsQueue.push({currentIndex.first, currentIndex.second - 1});
+                        }
+                        
+                        // Right
+                        if (currentIndex.second + 1 < grid[0].size() &&
+                            !islandIndexSet[currentIndex.first][currentIndex.second + 1] &&
+                            grid[currentIndex.first][currentIndex.second + 1] == 1) {
+                            tempResult ++;
+                            
+                            islandIndexSet[currentIndex.first][currentIndex.second + 1] = true;
+                            bfsQueue.push({currentIndex.first, currentIndex.second + 1});
+                        }
+                    }
+                    
+                    result = max(tempResult, result);
+                }
+            }
+        }
+        
+        return result;
+    }
+};
+```
+
+- BFS in Graph
+
+<p align="center">
+  <img src="imgs/48.png" />
+</p>
+
+> Record the node visited
+
+<p align="center">
+  <img src="imgs/49.png" />
+</p>
+
+- Valid Tree
+
+<p align="center">
+  <img src="imgs/50.png" />
+</p>
+
+> N vertices, N - 1 edges
+
+> Vertices are connected
+
+- Adjacency list
+
+<p align="center">
+  <img src="imgs/51.png" />
+</p>
+
+- [Clone Graph](https://leetcode.com/problems/clone-graph/)
+
+<p align="center">
+  <img src="imgs/52.png" />
+</p>
+
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+    Node() {
+        val = 0;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val) {
+        val = _val;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* cloneGraph(Node* node) {
+        if (!node)
+            return nullptr;
+        
+        // Root clone node
+        Node* rootClone = new Node(node->val);
+        // BFS queue for original graph
+        queue<Node*> bfsQueueOG;
+        // BFS queue for clone graph
+        queue<Node*> bfsQueueCG;
+        // Record visited node to avoid duplication in queue,
+        // value will be the created clone node corresponded
+        // to the key (int)
+        map<int, Node*> visitedNodeCloneMap;
+        
+        // Init
+        bfsQueueOG.push(node);
+        bfsQueueCG.push(rootClone);
+        visitedNodeCloneMap[node->val] = rootClone;
+        
+        while(bfsQueueOG.size() > 0) {
+            auto currentNode = bfsQueueOG.front();
+            auto currentCloneNode = bfsQueueCG.front();
+            
+            bfsQueueOG.pop();
+            bfsQueueCG.pop();
+            
+            // Iterate neighbors
+            for (auto i: currentNode->neighbors) {
+                Node* neighborNode;
+                
+                // Check if the neighborNode is visited or not
+                // so that we decided whether we need to
+                // iterate its neighbors and clone the node
+                if (visitedNodeCloneMap.find(i->val) == visitedNodeCloneMap.end()) {
+                    // Clone if not cloned yet
+                    neighborNode = new Node(i->val);
+                    
+                    // Next level
+                    bfsQueueOG.push(i);
+                    bfsQueueCG.push(neighborNode);
+                    
+                    visitedNodeCloneMap[i->val] = neighborNode;
+                } else {
+                    // If it is visited, then used the clone node in the map
+                    neighborNode = visitedNodeCloneMap[i->val];
+                }
+                
+                // Record neighbors in the clone node
+                currentCloneNode->neighbors.push_back(neighborNode);
+            }
+        }
+
+        return rootClone;
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/53.png" />
+</p>
+
+## Topological Sorting
+
+<p align="center">
+  <img src="imgs/54.png" />
+</p>
+
+> 排的是拓扑序 - topo order - 依赖关系
+
+> Directed graph
+
+<p align="center">
+  <img src="imgs/55.png" />
+</p>
+
+> Indegree - 入度, the starting node of the topological order should have indegree zero
+
+> Indegree zero means that no directed edge is **pointing to** the node -> no dependecies
+
+> bfs until the node has zero ingegree, record in the list
+
+<p align="center">
+  <img src="imgs/56.png" />
+</p>
+
+- Course Schedule
+
+<p align="center">
+  <img src="imgs/57.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        if (prerequisites.size() == 0)
+            return true;
+        
+        // Topological sorting
+        
+        // Indegree Map - key : course, value : indegree
+        map<int, int> indegreeMap;
+        // Queue bfs
+        queue<int> bfsQueue;
+        // Couse Taken set
+        set<int> courseTakenSet;
+
+        // Fill map with course
+        for (int i = 0; i < numCourses; i ++) {
+            indegreeMap[i] = 0;
+        }
+        
+        // Record Indegree - all the pairs prerequisites[i] are unique.
+        for (const auto& i : prerequisites) {
+            indegreeMap[i[0]] = indegreeMap[i[0]] + 1;
+        }
+        
+        // Fill bfsQueue and courseTakenSet with a node with indegree 0
+        for (auto& i : indegreeMap) {
+            if (i.second == 0) {
+                bfsQueue.push(i.first);
+                courseTakenSet.insert(i.first);
+                break;
+            }
+        }
+
+        // BFS loop
+        while(bfsQueue.size() > 0) {
+            auto currentCourse = bfsQueue.front();
+
+            bfsQueue.pop();
+
+            // Change the indegree map when the currentCourse is taken
+            for (const auto& i : prerequisites) {
+                if (i[1] == currentCourse)
+                    indegreeMap[i[0]] = indegreeMap[i[0]] - 1;
+            }
+
+            // Put all indegree zero courses into the queue to loop
+            for (auto& i : indegreeMap) {
+                // Avoid duplication by usinfg set
+                if (i.second == 0 && courseTakenSet.find(i.first) == courseTakenSet.end()) {
+                    bfsQueue.push(i.first);
+                    courseTakenSet.insert(i.first);
+                }
+            }
+        }
+
+        // Final check to see if all indegree is zero
+        bool allCourseCouldBeTaken {true};
+        for (auto& i : indegreeMap) {
+            if (i.second != 0)
+                allCourseCouldBeTaken = false;
+        }
+
+        return allCourseCouldBeTaken;
+    }
+};
+```
+
+## DFS (Depth First Search)
+
+<p align="center">
+  <img src="imgs/58.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/63.png" />
+</p>
+
+- Combination
+
+<p align="center">
+  <img src="imgs/59.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/60.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/61.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/62.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    // DFS recursiom
+    // currentCom record the current comnination item
+    //
+    // startIndex indicates that the loop should start
+    // from the current loop element to avoid duplication
+    //
+    // depth means the k callstack
+    void findCombination(vector<int> currentCom,
+                         int n,
+                         int k,
+                         int startIndex,
+                         int depth,
+                         vector<vector<int>>& result){
+        // Stop Condition
+        if (depth == k)
+            return;
+        
+        for (int i = startIndex; i <= n; i ++) {
+            currentCom.push_back(i);
+
+            if (currentCom.size() == k)
+                result.push_back(currentCom);
+
+            findCombination(currentCom, n, k, i + 1, depth + 1, result);
+
+            currentCom.erase(currentCom.end() - 1);
+        }
+    }
+    
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> result;
+        
+        // DFS
+        findCombination({}, n, k, 1, 0, result);
+        
+        return result;
+    }
+};
+```
+- Combination Sum
+
+<p align="center">
+  <img src="imgs/64.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void combinationSumDFS(int sum,
+                           int target,
+                           int startingIndex,
+                           vector<int> currentCom,
+                           const vector<int>& candidates,
+                           vector<vector<int>>& result) {
+        // Stop condition
+        // This is needed instead of directly return from if (currentSum == target)
+        // Since if target == 8, 4,4 -> still need 4, 2, 2
+        if (sum >= target)
+            return;
+        
+        for (int i = startingIndex; i < candidates.size(); i++) {
+            auto currentSum = sum + candidates[i];
+            
+            // Larger -> continue the loop
+            if (currentSum > target)
+                continue;
+            
+            // Not, larger common code for other case
+            sum = currentSum;
+            currentCom.push_back(candidates[i]);
+            
+            // Record when equal
+            if (currentSum == target)
+                result.push_back(currentCom);
+            
+            // DFS call
+            combinationSumDFS(sum, target, i, currentCom,
+                              candidates, result);
+            
+            // Trace back
+            currentCom.pop_back();
+            sum = sum - candidates[i];
+        }
+    }
+    
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> result;
+        
+        combinationSumDFS(0, target, 0, {}, candidates, result);
+        
+        return result;
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/65.png" />
+</p>
+
+- How to avoid duplicate -> e.g. [1, 1, 1, 1, 2], target 4 -> avoid 1',1''',1''''2 and 1'',1''',1'''' 2
+
+```c++
+    // Sort the candidate, so that [1, 1, 1, 2], target 4
+    // 1', and 1'', and 1''' can be distinguished
+    sort(candidates.begin(), candidates.end());
+    
+    void combinationSumDFS(int sum,
+                           int target,
+                           int startingIndex,
+                           vector<int> currentCom,
+                           const vector<int>& candidates,
+                           vector<vector<int>>& result) {
+        // Stop condition
+        // This is needed instead of directly return from if (currentSum == target)
+        // Since if target == 8, 4,4 -> still need 4, 2, 2
+        if (sum >= target)
+            return;
+        
+        for (int i = startingIndex; i < candidates.size(); i++) {
+            // [1, 1, 1, 2], target 4
+            // 1', and 1'', and 1''' can be distinguished
+            // check if 1'' == 1'
+            // and i != startingIndex means the second for loop
+            // 1', 1'', 1''' will be taken in DFS,
+            // Avoid 1',1'',1''' in the second for (non dfs) loop
+            if (i != startingIndex && candidates[i] == candidates[i - 1])
+                continue;
+            
+            auto currentSum = sum + candidates[i];
+            
+            // Larger -> continue the loop
+            if (currentSum > target)
+                continue;
+            
+            // Not, larger common code for other case
+            sum = currentSum;
+            currentCom.push_back(candidates[i]);
+            
+            // Record when equal
+            if (currentSum == target)
+                result.push_back(currentCom);
+            
+            // DFS call
+            combinationSumDFS(sum, target, i + 1, currentCom,
+                              candidates, result);
+            
+            // Trace back
+            currentCom.pop_back();
+            sum = sum - candidates[i];
+        }
+    }
+```
+
+- Good recursion example
+
+<p align="center">
+  <img src="imgs/66.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void recurHelper(
+        int depth,
+        int index,
+        const string& s,
+        string currentS,
+        vector<string>& result) {
+        
+        if(depth == s.size()) {
+            result.push_back(currentS);
+            return;
+        }
+        
+        int asciiNum = static_cast<int>(s[index]);
+        
+        // Upper case
+        if (asciiNum >= 65 && asciiNum <= 90) {
+            recurHelper(depth + 1, index + 1, s, currentS + static_cast<char>(asciiNum + 32), result);
+        } else if (asciiNum >= 97 && asciiNum <= 122) {
+            recurHelper(depth + 1, index + 1, s, currentS + static_cast<char>(asciiNum - 32), result);
+        }
+        
+        recurHelper(depth + 1, index + 1, s, currentS + static_cast<char>(asciiNum), result);
+    }
+    
+    vector<string> letterCasePermutation(string s) {
+        vector<string> result;
+        
+        recurHelper(0, 0, s, {}, result);
+        
+        return result;
+    }
+};
+```
+
+> https://leetcode.com/problems/reverse-linked-list/
+
+<p align="center">
+  <img src="imgs/67.png" />
+</p>
+
+- Permutation
+
+<p align="center">
+  <img src="imgs/68.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/69.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void permuteRecu(vector<int> currentItem, 
+                     vector<int>& nums, vector<vector<int>>& result,
+                    int depth) {
+        if (depth == nums.size())
+            return;
+        
+        for(int i = 0; i < nums.size(); i ++) {
+            auto it = find (currentItem.begin(), currentItem.end(), nums[i]);
+            if (it == currentItem.end()) {
+                currentItem.push_back(nums[i]);
+                if (currentItem.size() == nums.size()) {
+                    result.push_back(currentItem);
+                    break;
+                }
+                
+                permuteRecu(currentItem, nums, result, depth + 1);
+            
+                currentItem.pop_back();
+            }
+        }
+    }
+    
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int>> result;
+        
+        permuteRecu({}, nums, result, 0);
         
         return result;
     }
