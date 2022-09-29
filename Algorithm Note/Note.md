@@ -1384,6 +1384,85 @@ public:
 };
 ```
 
+<p align="center">
+  <img src="imgs/72.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        // Use HashSet to reduce the search cost
+        bool endWordIn {false};
+        set<string> wordListSet;
+        
+        // Return if the endWord is not in the wordList
+        for (auto& i :wordList) {
+            if (i == endWord) {
+                endWordIn = true;
+            }
+            wordListSet.insert(i);
+        }
+        
+        if (!endWordIn)
+            return 0;
+        
+        // Actual BFS
+        int result {1};
+        queue<string> bfsSearchQueue;
+        set<string> onceInList;
+        
+        // Init
+        bfsSearchQueue.push(beginWord);
+        onceInList.insert(beginWord);
+        
+        // BFS Loop
+        while(bfsSearchQueue.size() > 0) {
+            auto currentLevelSize = bfsSearchQueue.size();
+            
+            // Level loop
+            for(int i = 0; i < currentLevelSize; i ++) {
+                auto currentString = bfsSearchQueue.front();
+                
+                bfsSearchQueue.pop();
+                
+                // String change char loop
+                for (int currentCharIndex = 0; currentCharIndex < currentString.size(); currentCharIndex++) {
+                    
+                    // 97 -> 'a'
+                    // 26 char loop
+                    for (int asciiChar = 97; asciiChar <= 122; asciiChar ++) {
+                        // Same char, continue
+                        if (static_cast<char>(asciiChar) == currentString[currentCharIndex])
+                            continue;
+                        
+                        auto modifiedString = currentString;
+                        modifiedString[currentCharIndex] = static_cast<char>(asciiChar);
+                        
+                        // Visited, then continue, reduce redudant string
+                        if (onceInList.find(modifiedString) != onceInList.end())
+                            continue;
+                        // Return if mutated string is the endWord
+                        if (modifiedString == endWord)
+                            return result + 1;
+                        
+                        // Check if it is in the wordListSet
+                        if (wordListSet.find(modifiedString) != wordListSet.end()) {
+                            bfsSearchQueue.push(modifiedString);
+                            onceInList.insert(modifiedString);
+                        }
+                    }
+                }
+            }
+            
+            result ++;
+        }
+        
+        return 0;
+    }
+};
+```
+
 ## DFS (Depth First Search)
 
 <p align="center">
@@ -1661,6 +1740,64 @@ public:
     }
 };
 ```
+
+- N queen
+
+<p align="center">
+  <img src="imgs/70.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<vector<string>> ret;
+    bool is_valid(vector<string> &board, int row, int col){
+        // check col
+        for(int i=row;i>=0;--i)
+            if(board[i][col] == 'Q') return false;
+        // check left diagonal
+        for(int i=row,j=col;i>=0&&j>=0;--i,--j)
+            if(board[i][j] == 'Q') return false;
+        //check right diagonal
+        for(int i=row,j=col;i>=0&&j<board.size();--i,++j)
+            if(board[i][j] == 'Q') return false;
+        return true;
+    }
+    void dfs(vector<string> &board, int row){
+        // exit condition
+        if(row == board.size()){
+            ret.push_back(board);
+            return;
+        }
+        // iterate every possible position
+        for(int i=0;i<board.size();++i){
+            if(is_valid(board,row,i)){
+                // make decision
+                board[row][i] = 'Q';
+                // next iteration
+                dfs(board,row+1);
+                // back-tracking
+                board[row][i] = '.';
+            }
+        }
+    }
+    vector<vector<string>> solveNQueens(int n) {
+		// return empty if n <= 0
+        if(n <= 0) return {{}};
+        vector<string> board(n,string(n,'.'));
+        dfs(board,0);
+        return ret;
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/71.png" />
+</p>
+
+> ```Hashmap or HashSet find string -> O(L)```
+
+- [Word Ladder II](https://www.jiuzhang.com/solutions/word-ladder-ii)
 
 ## [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
 

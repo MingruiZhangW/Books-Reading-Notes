@@ -613,6 +613,22 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
 
 - Stack - function calls 
 
+<p align="center">
+  <img src="imgs/193.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/194.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/195.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/196.png" />
+</p>
+
 ## [lvalues and rvalues](https://www.learncpp.com/cpp-tutorial/value-categories-lvalues-and-rvalues/)
 
 <p align="center">
@@ -890,6 +906,203 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
 </p>
 
 > [Class template argument deduction (CTAD) and deduction guides](https://www.learncpp.com/cpp-tutorial/class-template-argument-deduction-ctad-and-deduction-guides/)
+
+## Function Pointers
+
+<p align="center">
+  <img src="imgs/185.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/186.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/187.png" />
+</p>
+
+- Callback functions
+
+<p align="center">
+  <img src="imgs/188.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/189.png" />
+</p>
+
+```c++
+#include <utility> // for std::swap
+#include <iostream>
+
+// Note our user-defined comparison is the third parameter
+void selectionSort(int* array, int size, bool (*comparisonFcn)(int, int))
+{
+    // Step through each element of the array
+    for (int startIndex{ 0 }; startIndex < (size - 1); ++startIndex)
+    {
+        // bestIndex is the index of the smallest/largest element we've encountered so far.
+        int bestIndex{ startIndex };
+
+        // Look for smallest/largest element remaining in the array (starting at startIndex+1)
+        for (int currentIndex{ startIndex + 1 }; currentIndex < size; ++currentIndex)
+        {
+            // If the current element is smaller/larger than our previously found smallest
+            if (comparisonFcn(array[bestIndex], array[currentIndex])) // COMPARISON DONE HERE
+            {
+                // This is the new smallest/largest number for this iteration
+                bestIndex = currentIndex;
+            }
+        }
+
+        // Swap our start element with our smallest/largest element
+        std::swap(array[startIndex], array[bestIndex]);
+    }
+}
+
+// Here is a comparison function that sorts in ascending order
+// (Note: it's exactly the same as the previous ascending() function)
+bool ascending(int x, int y)
+{
+    return x > y; // swap if the first element is greater than the second
+}
+
+// Here is a comparison function that sorts in descending order
+bool descending(int x, int y)
+{
+    return x < y; // swap if the second element is greater than the first
+}
+
+// This function prints out the values in the array
+void printArray(int* array, int size)
+{
+    for (int index{ 0 }; index < size; ++index)
+    {
+        std::cout << array[index] << ' ';
+    }
+
+    std::cout << '\n';
+}
+
+int main()
+{
+    int array[9]{ 3, 7, 9, 5, 6, 1, 8, 2, 4 };
+
+    // Sort the array in descending order using the descending() function
+    selectionSort(array, 9, descending);
+    printArray(array, 9);
+
+    // Sort the array in ascending order using the ascending() function
+    selectionSort(array, 9, ascending);
+    printArray(array, 9);
+
+    return 0;
+}
+```
+
+<p align="center">
+  <img src="imgs/190.png" />
+</p>
+
+- Making function pointers prettier with type aliases
+
+<p align="center">
+  <img src="imgs/191.png" />
+</p>
+
+- ```std::function```
+
+<p align="center">
+  <img src="imgs/192.png" />
+</p>
+
+## [Ellipsis](https://www.learncpp.com/cpp-tutorial/ellipsis-and-why-to-avoid-them/)
+
+```c++
+#include <iostream>
+#include <cstdarg> // needed to use ellipsis
+
+// The ellipsis must be the last parameter
+// count is how many additional arguments we're passing
+double findAverage(int count, ...)
+{
+    int sum{ 0 };
+
+    // We access the ellipsis through a va_list, so let's declare one
+    std::va_list list;
+
+    // We initialize the va_list using va_start.  The first argument is
+    // the list to initialize.  The second argument is the last non-ellipsis
+    // parameter.
+    va_start(list, count);
+
+    // Loop through all the ellipsis values
+    for (int arg{ 0 }; arg < count; ++arg)
+    {
+         // We use va_arg to get values out of our ellipsis
+         // The first argument is the va_list we're using
+         // The second argument is the type of the value
+         sum += va_arg(list, int);
+    }
+
+    // Cleanup the va_list when we're done.
+    va_end(list);
+
+    return static_cast<double>(sum) / count;
+}
+
+int main()
+{
+    std::cout << findAverage(5, 1, 2, 3, 4, 5) << '\n';
+    std::cout << findAverage(6, 1, 2, 3, 4, 5, 6) << '\n';
+
+    return 0;
+}
+```
+
+# [Lambdas](https://www.learncpp.com/cpp-tutorial/introduction-to-lambdas-anonymous-functions/)
+
+<p align="center">
+  <img src="imgs/197.png" />
+</p>
+
+- [Lambda captures](https://www.learncpp.com/cpp-tutorial/lambda-captures/)
+
+<p align="center">
+  <img src="imgs/198.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/199.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/200.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/201.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/202.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/203.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/204.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/205.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/206.png" />
+</p>
 
 ## **图解 Git 工作原理**
 
