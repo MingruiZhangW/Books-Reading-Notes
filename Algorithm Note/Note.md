@@ -1799,6 +1799,270 @@ public:
 
 - [Word Ladder II](https://www.jiuzhang.com/solutions/word-ladder-ii)
 
+## Hash and Heap
+
+### Hash
+
+- Hash function
+
+<p align="center">
+  <img src="imgs/75.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/76.png" />
+</p>
+
+- Open hashing vs Closed hashing
+
+<p align="center">
+  <img src="imgs/79.png" />
+</p>
+
+> Closed hashing - collision -> take other cell
+
+> Open hashing - collision -> take the same cell (**linked list**)
+
+> **Open hasing is generally better**
+
+<p align="center">
+  <img src="imgs/80.png" />
+</p>
+
+> After rehashing, the computed hash value from hash funtion might change, we need to rehash all elements again
+
+- Least Recently Used (LRU Cache, the timing be used is the longest) 
+
+> (Least Frequently Used is the number of times being used is the smallest)
+
+<p align="center">
+  <img src="imgs/77.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/78.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/81.png" />
+</p>
+
+```c++
+class LRUCache {
+public:
+    // Capacity
+    int cap;
+    // Map -> has to store iterator to make list erase faster
+    // Map to store the value
+    map<int, pair<list<int>::iterator, int>> keyMapInVec;
+    // Linked list
+    // to maintain the order LRU
+    list<int> itemList;
+    
+    LRUCache(int capacity) {
+        cap = capacity;
+        // Ugly to solve leet code issue
+        ios_base::sync_with_stdio(false);
+        cin.tie(nullptr);
+        cout.tie(nullptr);
+    }
+    
+    int get(int key) {
+        // Find if in the map
+        auto mapIt = keyMapInVec.find(key);
+        if (mapIt == keyMapInVec.end())
+            return -1;
+        
+        // In the map, reorder LRU
+        itemList.erase(mapIt->second.first);
+        itemList.push_front(key);
+        mapIt->second.first = itemList.begin();
+        return mapIt->second.second;
+    }
+    
+    void put(int key, int value) {
+        auto mapIt = keyMapInVec.find(key);
+        // Not in the map
+        if (mapIt == keyMapInVec.end()) {
+            // Over Cap
+            if (keyMapInVec.size() == cap) {
+                // Remove the current LRU
+                auto lru = itemList.back();
+                keyMapInVec.erase(lru);
+                // Reorder the new key
+                itemList.pop_back();
+                itemList.push_front(key);
+            } else {
+                itemList.push_front(key);
+            }
+        // Not in the map
+        } else {
+            // Reorder
+            itemList.erase(mapIt->second.first);
+            itemList.push_front(key);
+        }
+        
+        // Record the key
+        keyMapInVec[key] = {itemList.begin(), value};
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+```
+
+- ```std::set``` , ```std::map``` is **Red-black tree**
+- ```std::unordered_set```, ```std::unordered_map``` is **Hashing**
+
+<p align="center">
+  <img src="imgs/74.png" />
+</p>
+
+### Heap
+
+<p align="center">
+  <img src="imgs/82.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/83.png" />
+</p>
+
+- [```std::priority_queue```](https://en.cppreference.com/w/cpp/container/priority_queue)
+
+> Max-heap by default
+
+<p align="center">
+  <img src="imgs/73.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/85.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/84.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        // Min heap to meake sure the top is minimum value
+        priority_queue<long long, vector<long long>,greater<long long>> minHeap;
+        set<long long> uniqueSet;
+        
+        // Push one into the quque
+        minHeap.push(1);
+        uniqueSet.insert(1);
+        
+        // Counter to be n -> pop n times from quque
+        int counter{0};
+        while(true) {
+            // Currrent minimum item
+            auto currentItem {minHeap.top()};
+            minHeap.pop();
+            
+            // Return when reaches the n times
+            counter ++;
+            if(counter == n)
+                return currentItem;
+            
+            // Current minimum to calculate new ugly number
+            // First loop -> pop 1
+            // 1 -> 2, 1 -> 3, 1 -> 5
+            // Second loop -> pop 2
+            // 2 -> 2 * 2 = 4, 2 -> 2 * 3 = 6, 2 -> 2 * 5 = 10
+            // ...
+            // The nth poped item should be the nth ugly number
+            for (int j = 0; j < 3; j ++) {   
+                auto tempItem = currentItem;
+                
+                if (j == 0)
+                    tempItem = tempItem * 2;
+                else if (j == 1)
+                    tempItem = tempItem * 3;
+                else if (j == 2)
+                    tempItem = tempItem * 5;
+                
+                // Not in set, add to queue
+                if (uniqueSet.find(tempItem) == uniqueSet.end()) {
+                    uniqueSet.insert(tempItem);
+                    minHeap.push(tempItem);
+                }
+            }
+        }
+        
+        return minHeap.top();
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/86.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    /*
+    Compare	-	A Compare type providing a strict weak ordering. Note that the Compare parameter 
+                is defined such that it returns true if its first argument comes before its second 
+                argument in a weak ordering. But because the priority queue outputs largest elements 
+                first, the elements that "come before" are actually output last. That is, the front of 
+                the queue contains the "last" element according to the weak ordering imposed by Compare.
+    */
+    struct cmp {
+        bool operator()(const pair<string, int>& A, 
+                        const pair<string, int>& B) {
+            // Sort the words with the same frequency by their lexicographical order.
+            if (A.second == B.second) {
+                int index{0};
+                
+                while(A.first[index] == B.first[index])
+                    index ++;
+                
+                // Ascii code for 'a' < 'z', so we need 'a', return false
+                return static_cast<int>(A.first[index]) < static_cast<int>(B.first[index]) ?
+                    false : true;
+            }
+            
+            // Frequency A > B, we need A, return false
+            return A.second > B.second ? false : true;
+        }
+    };
+    
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        map<string, int> recordMap;
+        vector<string> result;
+        
+        // Record frequency
+        for (auto & i : words) {
+            if (recordMap.find(i) == recordMap.end()) {
+                recordMap[i] = 0;
+            } else
+                recordMap[i] = recordMap[i] + 1;
+        }
+        
+        // Use functor
+        priority_queue<pair<string, int>, vector<pair<string, int>>, cmp> pQ (recordMap.begin(), recordMap.end());
+        
+        for (int i = 0; i < k; i ++) {
+            result.push_back(pQ.top().first);
+            pQ.pop();
+        }
+        
+        return result;
+    }
+};
+```
+
+- [Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/)
+
 ## [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
 
 ## **Ring Buffer**
