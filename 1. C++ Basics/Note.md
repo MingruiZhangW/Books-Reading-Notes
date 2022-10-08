@@ -1104,6 +1104,36 @@ int main()
   <img src="imgs/206.png" />
 </p>
 
+## Value Categories In Details
+
+<p align="center">
+  <img src="imgs/207.png" />
+</p>
+
+- Every expression in C++ has one of three value categories: ```lvalue```,``` prvalue (pure rvalue)```, or ```xvalue (eXpiring value)```. There are then two super-categories.
+
+<p align="center">
+  <img src="imgs/208.png" />
+</p>
+
+- [Example](https://en.cppreference.com/w/cpp/language/value_category)
+
+<p align="center">
+  <img src="imgs/209.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/210.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/211.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/212.png" />
+</p>
+
 ## **图解 Git 工作原理**
 
 From: https://mp.weixin.qq.com/s/YM2dNmmR_oKPO9hctTOhjg

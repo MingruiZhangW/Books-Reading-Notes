@@ -2063,6 +2063,50 @@ public:
 
 - [Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/)
 
+## Sliding Window
+
+<p align="center">
+  <img src="imgs/87.png" />
+</p>
+
+
+```c++
+class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int leftW {0};
+        int rightW {0};
+        long long result {numeric_limits<long long>::max()};
+        
+        int currentR{nums[0]};
+        while (leftW < nums.size()) {
+            // If smaller, keep adding to currentR until reaches limit
+            if (currentR < target) {
+                rightW ++;
+                
+                if (rightW == nums.size()) {
+                    break;
+                }
+                
+                currentR = currentR + nums[rightW];
+            } else {
+                // If larger, record result
+                result = min(result, static_cast<long long>(rightW - leftW + 1));
+                
+                // Safely remove the left item
+                currentR = currentR - nums[leftW];
+                leftW ++;
+                
+                // if the currentR is still larger than target
+                // keep reaching this branch until it is not
+            }
+        }
+        
+        return result == numeric_limits<long long>::max() ? 0 : result;
+    }
+};
+```
+
 ## [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
 
 ## **Ring Buffer**
