@@ -1741,6 +1741,59 @@ public:
 };
 ```
 
+- Permutation II (remove duplicate)
+
+<p align="center">
+  <img src="imgs/89.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void findPermuteUnique(int depth,
+                           vector<int> currentItem,
+                           vector<int>& nums,
+                           vector<vector<int>>& result,
+                           vector<bool>& visited) {
+        if (currentItem.size() == nums.size()) {
+            result.push_back(currentItem);
+            return;
+        }
+        
+        for (int i = 0; i < nums.size(); i ++) {
+            // Remove duplicate
+            //[1`, 1``, 2]
+            // 1` -> 1`,1` (1 ` visited, continue) -> 1`, 1``, (visited[i - 1] == 1) recorded
+            // 1`` -> 1``, 1`, visited[i - 1] == 0, continue
+            if (i != 0 && nums[i] == nums[i - 1] && visited[i - 1] == 0) {
+                continue;
+            }
+            
+            if (!visited[i]) {
+                currentItem.push_back(nums[i]);
+                visited[i] = true;
+
+                findPermuteUnique(depth + 1, currentItem, nums, result, visited);
+
+                currentItem.pop_back();
+                visited[i] = false;
+            }
+        }
+    }
+    
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>> result;
+        vector<bool> visited (nums.size(), false);
+        
+        sort(nums.begin(), nums.end());
+        
+        findPermuteUnique(0, {}, nums, result, visited);
+        
+        return result;
+    }
+};
+```
+
 - N queen
 
 <p align="center">
@@ -1798,6 +1851,49 @@ public:
 > ```Hashmap or HashSet find string -> O(L)```
 
 - [Word Ladder II](https://www.jiuzhang.com/solutions/word-ladder-ii)
+
+- Subset II (Find the representitive -> need sorted)
+
+<p align="center">
+  <img src="imgs/8.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void findSubset(int currentIndex,
+                    vector<int> currentItem,
+                    const vector<int>& nums,
+                    vector<vector<int>>& result) {
+        for (int i = currentIndex; i < nums.size(); i ++) {
+            // Find the representitive
+            // i != currentIndex means [1 ,2` ,2``, 2```] -> [1, 2`, 2```] -> second iteration of [1, 2`] loop
+            // nums[i] == nums[i - 1] to remove the duplicate
+            if (i != currentIndex && nums[i] == nums[i - 1])
+                continue;
+            
+            currentItem.push_back(nums[i]);
+            result.push_back(currentItem);
+
+            findSubset(i + 1, currentItem, nums, result);
+
+            currentItem.pop_back();
+        }
+    }
+    
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<vector<int>> result;
+        result.push_back({});
+        
+        // Find the representitive method has to be sorted
+        sort(nums.begin(), nums.end());
+        
+        findSubset(0, {}, nums, result);
+        
+        return result;
+    }
+};
+```
 
 ## Hash and Heap
 
