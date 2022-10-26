@@ -2165,7 +2165,6 @@ public:
   <img src="imgs/87.png" />
 </p>
 
-
 ```c++
 class Solution {
 public:
@@ -2203,7 +2202,226 @@ public:
 };
 ```
 
-## [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
+## Dynamic Programming
+
+<p align="center">
+  <img src="imgs/90.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/91.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/92.png" />
+</p>
+
+- 记忆化搜索
+
+<p align="center">
+  <img src="imgs/93.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/94.png" />
+</p>
+
+- 多重循环
+
+```c++
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        vector<vector<int>> dp = triangle;
+        
+        // 多重循环，自下而上
+        //    2
+        //   3 4
+        //  6 5 7
+        // 4 1 8 3
+        // from 6,5,7
+        for (int i = triangle.size() - 2; i >= 0; i --) {
+            for (int j = 0; j < triangle[i].size(); j ++) {
+                dp[i][j] = dp[i][j] + min(dp[i + 1][j], dp[i + 1][j + 1]);
+            }
+        }
+        
+        return dp[0][0];
+    }
+};
+```
+
+```c++
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        vector<vector<int>> dp = triangle;
+        
+        // 多重循环，自上而下
+        //    2
+        //   3 4
+        //  6 5 7
+        // 4 1 8 3
+        // From 2
+        for (int i = 0; i < triangle.size() - 1; i ++) {
+            for (int j = 0; j < triangle[i].size(); j ++) {
+                // check if the next layer's element's value is changed or not
+                // if changed, compare the min
+                if (dp[i + 1][j] == triangle[i + 1][j])
+                    dp[i + 1][j] = dp[i][j] + dp[i + 1][j];
+                else
+                    dp[i + 1][j] = min(dp[i + 1][j], dp[i][j] + triangle[i + 1][j]);
+        
+                // check if the next layer's element's value is changed or not
+                // if changed, compare the min
+                if (dp[i + 1][j + 1] == triangle[i + 1][j + 1])
+                    dp[i + 1][j + 1] = dp[i][j] + dp[i + 1][j + 1];
+                else
+                    dp[i + 1][j + 1] = min(dp[i + 1][j + 1], dp[i][j] + triangle[i + 1][j + 1]);
+            }
+        }
+        
+        // Result resides on one of the element in the last layer
+        int result{numeric_limits<int>::max()};
+        for (int j = 0; j < triangle[triangle.size() - 1].size(); j ++) {
+            result = min(result, dp[triangle.size() - 1][j]);
+        } 
+        
+        return result;
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/95.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/96.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/97.png" />
+</p>
+
+- Minimum Path Sum
+
+<p align="center">
+  <img src="imgs/98.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+        vector<vector<int>> dp = grid;
+        vector<vector<bool>> visited (grid.size(), vector<bool>(grid[0].size(), false));
+        
+        for (int i = grid.size() - 1; i >= 0; i --) {
+            for (int j = grid[i].size() - 1; j >= 0; j --) {
+                if (i - 1 >= 0) {
+                    if (!visited[i - 1][j]) {
+                        dp[i - 1][j] = dp[i][j] + dp[i - 1][j];
+                        visited[i - 1][j] = true;
+                    } else
+                        dp[i - 1][j] = min(dp[i][j] + grid[i - 1][j], dp[i - 1][j]);
+                }
+                
+                 if (j - 1 >= 0) {
+                    if (!visited[i][j - 1]) {
+                        dp[i][j - 1] = dp[i][j] + dp[i][j - 1];
+                        visited[i][j - 1] = true;
+                    } else
+                        dp[i][j - 1] = min(dp[i][j] + grid[i][j - 1], dp[i][j - 1]);
+                 }
+            }
+        }
+        
+        return dp[0][0];
+    }
+};
+```
+
+- [Maximal Square](https://leetcode.com/problems/maximal-square/)
+
+<p align="center">
+  <img src="imgs/99.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& matrix) {
+        vector<vector<int>> dp (matrix.size(), vector<int>(matrix[0].size(), 0));
+        
+        int maxL {0};
+        
+        for (int i = 0; i < matrix.size(); i ++) {
+            for (int j = 0; j < matrix[0].size(); j ++) {
+                dp[i][j] = matrix[i][j] == '0' ? 0 : 1;
+                if (dp[i][j] == 1)
+                    maxL = 1;
+            }
+        }
+        
+        for (int i = 1; i < matrix.size(); i ++) {
+            for (int j = 1; j < matrix[0].size(); j ++) {
+                if (dp[i][j] > 0 && dp[i - 1][j] > 0 && dp[i][j - 1] > 0 && dp[i - 1][j - 1] > 0) {
+                    if (dp[i - 1][j] == dp[i][j - 1] && dp[i][j - 1] == dp[i - 1][j - 1])
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    else
+                        dp[i][j] = min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]}) + 1;
+                    
+                    maxL = max(maxL, static_cast<int>(pow(dp[i][j], 2.0)));
+                }
+            }
+        }
+        
+        return maxL;
+    }
+};
+```
+
+- [Unique Paths](https://leetcode.com/problems/unique-paths/)
+
+> Always think from basic case ([1,1] in this question)
+
+<p align="center">
+  <img src="imgs/100.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/101.png" />
+</p>
+
+
+```c++
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dpMa (m, vector<int>(n, 0));
+        
+        dpMa[0][0] = 1;
+        
+        for (int i = 0; i < m; i ++) {
+            for (int j = 0; j < n; j++) {
+                if (i - 1 >= 0) {
+                    dpMa[i][j] = dpMa[i][j] + dpMa[i - 1][j];
+                }
+                if (j - 1 >= 0) {
+                    dpMa[i][j] = dpMa[i][j] + dpMa[i][j - 1];
+                }
+            }
+        }
+
+        return dpMa[m - 1][n - 1];
+    }
+};
+```
+
+- [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
+
+From: https://zhuanlan.zhihu.com/p/91582909
 
 ## **Ring Buffer**
 
@@ -2215,10 +2433,6 @@ From: https://www.zhihu.com/question/30527705/answer/1663740519 <br/>
 From: https://zhuanlan.zhihu.com/p/72505589 <br/>
 From: https://mp.weixin.qq.com/s/cnDx8lJ6fXHgLZWsqjWrag <br/>
 From: https://mp.weixin.qq.com/s/waFh-_7Q3EiFdUfXawm4Ww <br/>
-
-## **Dynamic Programming**
-
-From: https://zhuanlan.zhihu.com/p/91582909
 
 ## **LeetCode**
 From: https://github.com/youngyangyang04/leetcode-master
