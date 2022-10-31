@@ -6,7 +6,7 @@
 
 ```现代操作系统：原理与实现``` :x:
 
-```C++ Basics``` :x:
+```C++ Basics``` :white_check_mark:
 
 ```程序员自我修养``` :x:
 

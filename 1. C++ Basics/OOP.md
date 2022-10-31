@@ -100,6 +100,7 @@ public:
     void add(int value) { m_value += value; }
 
     // Make the reset() function a friend of this class
+    // This is not a member function
     friend void reset(Accumulator& accumulator);
 };
 

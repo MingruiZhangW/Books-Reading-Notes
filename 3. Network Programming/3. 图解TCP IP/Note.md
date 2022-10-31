@@ -208,6 +208,10 @@
   <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/39.png?raw=true" />
 </p>
 
+<p align="center">
+  <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/126.png?raw=true" />
+</p>
+
 > Subnet & Subnet Mask
 
 <p align="center">
@@ -323,6 +327,8 @@
 <p align="center">
   <img src="https://github.com/MingruiZhangW/Books-Reading-Notes/blob/main/resources/img/network_programming_note/tu_jie_tcp_ip/62.png?raw=true" />
 </p>
+
+- [虽然```ARP``` 无法穿透网段（广播），但是跨网段```MAC```地址要的是网关，网关会给他的```MAC```](https://www.zhihu.com/question/21464851/answer/223124156)
 
 ### **ICMP** (Internet Control Message Protocol) - page. 182
 
