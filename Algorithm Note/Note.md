@@ -2226,6 +2226,10 @@ public:
   <img src="imgs/94.png" />
 </p>
 
+<p align="center">
+  <img src="imgs/103.png" />
+</p>
+
 - 多重循环
 
 ```c++
@@ -2384,6 +2388,10 @@ public:
 
 - [Unique Paths](https://leetcode.com/problems/unique-paths/)
 
+<p align="center">
+  <img src="imgs/104.png" />
+</p>
+
 > Always think from basic case ([1,1] in this question)
 
 <p align="center">
@@ -2415,6 +2423,157 @@ public:
         }
 
         return dpMa[m - 1][n - 1];
+    }
+};
+```
+
+- [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)
+
+<p align="center">
+  <img src="imgs/102.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    // Dumb solution
+//     int climbStairs(int n) {
+//         vector<int> divideV;
+        
+//         if (n == 1)
+//             return 1;
+//         if (n == 2)
+//             return 2;
+        
+//         divideV.push_back(1);
+//         divideV.push_back(2);
+        
+//         for (int i = 0;  i < n; i ++) {
+//             auto currentSize = divideV.size();
+//             for (int j = 0; j < currentSize; j ++) {
+//                 if (divideV[j] + 1 <= n) {
+//                     if (divideV[j] + 2 <= n) {
+//                         divideV.push_back(divideV[j] + 2);
+//                     }
+//                     divideV[j] = divideV[j] + 1;
+//                 }
+//             }
+//         }
+        
+//         return divideV.size();
+//     }
+    
+    // DP
+    // For the first stair : 1                            -> 1 solution
+    // For the second stair: 1 + 1 or 2                   -> 2 solutions
+    // For the third stair:  1 + 1 + 1 or 2 + 1 or 1 + 2  -> 3 solutions
+    // For the forth stair: 
+    // the solution equals to addition of the third stair and the second
+    // because 1 step from the third stair and 2 steps from the second
+    // -> 5 solutions
+    int climbStairs(int n) {
+        // Special case
+        if (n == 1)
+            return 1;
+        
+        int currentStairSolutions{0};
+        int oneStepBehind {1};
+        int twoStepBehind {1};
+        
+        for (int i = 2; i <= n; i ++) {
+            currentStairSolutions = oneStepBehind + twoStepBehind;
+            // Going up
+            twoStepBehind = oneStepBehind;
+            oneStepBehind = currentStairSolutions;
+        }
+        
+        return currentStairSolutions;
+    }
+};
+```
+
+- [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
+
+<p align="center">
+  <img src="imgs/105.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/106.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> dp;
+        dp.resize(nums.size());
+        
+        // Length for LIS
+        for (int i = 0; i < nums.size(); i ++) {
+            dp[i] = 1;
+        }
+        
+        // [10,9,2,5,3,7,101,18]
+        // 10 -> pass, 9 -> pass since 9 < 10
+        // 2 ->pass, 2 < 10, 2 < 9
+        // 5 -> dp[2] + 1 -> 2, 5 > 2, 5 < 9, 5 < 10
+        // ...
+        // 7 -> dp[3] + 1 -> 2 + 1 -> 3
+        for (int i = 0; i < nums.size(); i ++) {
+            for (int j = 0; j < i; j ++) {
+                if (nums[i] > nums[j])
+                    dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+        
+        int result = 0;
+        for (int i = 0; i < dp.size(); i ++) {
+            result = max(result, dp[i]);
+        }
+        
+        return result;
+    }
+};
+```
+
+- [Largest Divisible Subset](https://leetcode.com/problems/largest-divisible-subset/)
+
+<p align="center">
+  <img src="imgs/107.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        
+        vector<vector<int>> dp;
+        dp.resize(nums.size());
+        
+        for (int i = 0; i < nums.size(); i ++)
+            dp[i] = {nums[i]};
+        
+        for(int i = 1; i < nums.size(); i ++) {
+            for (int j = 0; j < i; j ++) {
+                if (nums[i] % nums[j] == 0) {
+                    if (dp[i].size() < dp[j].size() + 1) {
+                        auto temp = dp[j];
+                        temp.push_back(nums[i]);
+                        dp[i] = temp;
+                    }
+                }
+            }
+        }
+        
+        int resultIndex{0};
+        for (int i = 0; i < dp.size(); i ++) {
+            if (dp[i].size() > dp[resultIndex].size())
+                resultIndex = i;
+        }
+        
+        return dp[resultIndex];
     }
 };
 ```
