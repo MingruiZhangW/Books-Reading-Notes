@@ -2588,10 +2588,83 @@ From: https://zhuanlan.zhihu.com/p/394231116
 
 ## **Trees (AVL树，红黑树，B树，B+树，Trie)**
 
-From: https://www.zhihu.com/question/30527705/answer/1663740519 <br/>
-From: https://zhuanlan.zhihu.com/p/72505589 <br/>
+<p align="center">
+  <img src="imgs/108.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/109.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/110.png" />
+</p>
+
+- Problems with BSTs
+
+<p align="center">
+  <img src="imgs/111.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/112.png" />
+</p>
+
+> O(n) -> O(log n)
+
+### AVL Tree
+
+<p align="center">
+  <img src="imgs/113.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/114.png" />
+</p>
+
+### B Tree
+
+<p align="center">
+  <img src="imgs/115.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/116.png" />
+</p>
+
+### Red-black Tree
+
+<p align="center">
+  <img src="imgs/117.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/118.png" />
+</p>
+
+> 这些约束确保了红黑树的关键特性：从根到叶子的最长的可能路径不多于最短的可能路径的两倍长。
+
+- Operation details
+
 From: https://mp.weixin.qq.com/s/cnDx8lJ6fXHgLZWsqjWrag <br/>
 From: https://mp.weixin.qq.com/s/waFh-_7Q3EiFdUfXawm4Ww <br/>
+
+### Trie
+
+<p align="center">
+  <img src="imgs/120.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/121.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/122.png" />
+</p>
+
+From: https://www.zhihu.com/question/30527705/answer/1663740519 <br/>
+From: https://zhuanlan.zhihu.com/p/72505589 <br/>>
 
 ## **LeetCode**
 From: https://github.com/youngyangyang04/leetcode-master
