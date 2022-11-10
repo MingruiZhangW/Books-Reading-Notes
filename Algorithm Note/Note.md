@@ -1895,6 +1895,49 @@ public:
 };
 ```
 
+- [Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
+
+<p align="center">
+  <img src="imgs/123.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void generateParenthesisDFS(int n,
+                                int currentDepth,
+                                string currentItem,
+                                int lef,
+                                int rig,
+                                vector<string>& result) {
+        // Lef means the number of "("
+        // Rig means the number of  ")"
+        // lef + rig is the final depth of the call stack (n * 2)
+        if (currentDepth == n * 2) {
+            result.push_back(currentItem);
+            return;
+        }
+
+        // First add "(" will make sure that ")" always happens after "("
+        // The number of "(" is by max n
+        // The number of ")" should be smaller than lef (not n since we need to have lef first)
+        if (lef < n)
+            generateParenthesisDFS(n, currentDepth + 1, currentItem + "(", lef + 1, rig, result);
+
+        if (rig < lef)
+            generateParenthesisDFS(n, currentDepth + 1, currentItem + ")", lef, rig + 1, result);
+    }
+
+    vector<string> generateParenthesis(int n) {
+        vector<string> result;
+
+        generateParenthesisDFS(n, 0, {}, 0, 0, result);
+
+        return result;
+    }
+};
+```
+
 ## Hash and Heap
 
 ### Hash

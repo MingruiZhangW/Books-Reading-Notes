@@ -78,7 +78,7 @@
   <img src="imgs/18.png" />
 </p>
 
-- ***Decomposite class into policy**
+- **Decomposite class into policy**
 
 <p align="center">
   <img src="imgs/19.png" />
