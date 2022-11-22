@@ -303,6 +303,16 @@ int main()
 }
 ```
 
+> The address of a reference is the address of the aliased object or function
+
+```c++
+	Auto_ptr4& operator=(const Auto_ptr4& a)
+	{
+		// Self-assignment detection
+		if (&a == this)
+			return *this;
+```
+
 The move constructor and move assignment operator are simple. Instead of deep copying the source object (a) into the implicit object, we simply move (steal) the source object’s resources. This involves shallow copying the source pointer into the implicit object, then setting the source pointer to null.
 
 <p align="center">

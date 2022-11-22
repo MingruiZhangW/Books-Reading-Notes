@@ -69,7 +69,7 @@ sum = 480124300000
 
 From: https://www.zhihu.com/question/441518636/answer/1701252133
 
-## **Usage of Macro**
+## **Usage of Macro** - **Loop unrolling**
 
 > inline 无法代替宏的地方：
 1. 循环展开：
@@ -622,7 +622,7 @@ int pthread_spin_init (pthread_spinlock_t *lock, int pshared) {
 
 From: https://www.zhihu.com/question/66733477/answer/1267625567
 
-## **STL容器是否是线程安全的? **
+## **STL容器是否是线程安全的?**
 
 > 一般说来，stl对于多线程的支持仅限于下列两点: 
 
@@ -665,3 +665,38 @@ From: https://www.zhihu.com/question/29251261/answer/1297439131
 ## **What does auto&& tell us?**
 
 From: https://stackoverflow.com/questions/13230480/what-does-auto-tell-us
+
+## **P/NP问题**
+
+<p align="center">
+  <img src="imgs/1.png" />
+</p>
+
+## [C++ Thread Safe Singleton](https://stackoverflow.com/questions/34457432/c11-singleton-static-variable-is-thread-safe-why)
+
+- [Double-checked-locking and its problems](https://www.aristeia.com/Papers/DDJ_Jul_Aug_2004_revised.pdf)
+
+- Using a C++11 Static Initializer
+
+```c++
+Singleton& Singleton::getInstance() {
+    static Singleton instance;
+    return instance;
+}
+```
+
+<p align="center">
+  <img src="imgs/2.png" />
+</p>
+
+From: https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
+
+## ```volatile ```
+
+<p align="center">
+  <img src="imgs/3.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/4.png" />
+</p>

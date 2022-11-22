@@ -399,6 +399,12 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
   <img src="imgs/72.png" />
 </p>
 
+<p align="center">
+  <img src="imgs/214.png" />
+</p>
+
+- Static locals are initialized the first time they are called, and only the first time
+
 ## [Scope, duration, and linkage summary](https://www.learncpp.com/cpp-tutorial/scope-duration-and-linkage-summary/)
 
 ## [The performance of inline code](learncpp.com/cpp-tutorial/inline-functions/)

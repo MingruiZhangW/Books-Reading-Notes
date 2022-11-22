@@ -455,29 +455,32 @@ def optbst(t):
 class Solution {
 public:
     vector<int> sortedSquares(vector<int>& nums) {
-        int pointerNeg {0};
-        int pointerPos {static_cast<int>(nums.size()) - 1};
-        int pointerResultPos{static_cast<int>(nums.size()) - 1};
-        
+        // For [-4,-1,0,3,10], positive number are alreay sorted
+        // and its order will not change from squaring
+        // we need to care about the negative number
+
+        int left {0};
+        int right {static_cast<int>(nums.size()) - 1};
+        int resultPos = right;
         vector<int> result;
         result.resize(nums.size());
-        
-        for(int i = 0; i < nums.size(); i ++) {
-            if (pointerPos > pointerNeg) {
-                if (pow(nums[pointerPos], 2) >= pow(nums[pointerNeg], 2)) {
-                    result[pointerResultPos] = pow(nums[pointerPos], 2);
-                    pointerPos = pointerPos - 1;
-                } else {
-                    result[pointerResultPos] = pow(nums[pointerNeg], 2);
-                    pointerNeg = pointerNeg + 1;
-                }
-            } else if (pointerPos == pointerNeg) {
-                    result[pointerResultPos] = pow(nums[pointerNeg], 2);
+
+        // Use result as a container, maintain the record location of result
+        // Move right and left pointer accordingly
+        while(left <= right) {
+            if (pow(nums[right], 2) > pow(nums[left], 2)) {
+                result[resultPos] = pow(nums[right], 2);
+                right --;
+                resultPos --;
+            } else {
+                result[resultPos] = pow(nums[left], 2);
+                left ++;
+                resultPos--;
             }
-            
-            pointerResultPos = pointerResultPos - 1;
         }
-                    
+
+        // This method works only because nteger array nums sorted in non-decreasing order
+
         return result;
     }
 };
@@ -826,6 +829,38 @@ public:
         removePPtr->next = removePtr;
         
         return head;
+    }
+};
+```
+
+- [Container With Most Water](https://leetcode.com/problems/container-with-most-water/description/?envType=study-plan&id=algorithm-ii)
+
+<p align="center">
+  <img src="imgs/125.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int left {0};
+        int right {static_cast<int>(height.size()) - 1};
+        int result {0};
+
+        // left - > 0
+        // right -> size - 1
+        // When left height is smaller than right height, to increase the area, we can only move left ++
+        // When right height is smaller than left height, to increase the area , we can only move right --
+        while(left != right) {
+            result = max(result, (right - left) * min(height[left], height[right]));
+
+            if (height[left] > height[right])
+                right --;
+            else
+                left ++;
+        }
+
+        return result;
     }
 };
 ```
@@ -2245,6 +2280,43 @@ public:
 };
 ```
 
+- [Subarray Product Less Than K](https://leetcode.com/problems/subarray-product-less-than-k/description/?envType=study-plan&id=algorithm-ii)
+
+<p align="center">
+  <img src="imgs/124.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+        int left {0};
+        int result {0};
+        int currentProduct {1};
+        
+        for(int right = 0; right < nums.size(); right ++) {
+            currentProduct = currentProduct * nums[right];
+           
+            // left will stop at left = right
+            while (currentProduct >= k && left < right) {
+                currentProduct = currentProduct / nums[left];
+                left ++;
+            }
+
+            // (currentProduct >= k ? 0 : 1 ) is for the individual element in the array
+            // [1, 2, 3, 4]
+            // right = 4, left = 0, the number of subarray (without individual element) end with 4
+            // is three -> right - left
+            // for 1, 2, 3, 4, the number of number of subarray (without individual element) end with
+            // (1, 2, 3, 4) is accumulated if k is big enough 
+            result = result + right - left + (currentProduct >= k ? 0 : 1);
+        }
+
+        return result;
+    }
+};
+```
+
 ## Dynamic Programming
 
 <p align="center">
@@ -2580,6 +2652,71 @@ public:
 };
 ```
 
+- [Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/description/)
+
+<p align="center">
+  <img src="imgs/126.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int findNumberOfLIS(vector<int>& nums) {
+        vector<pair<int, int>> dp;
+        dp.resize(nums.size());
+        
+        // Length for LIS
+        // the second element in the pair is the number of LTS that
+        // has the length of the first element
+        for (int i = 0; i < nums.size(); i ++) {
+            dp[i] = {1, 1};
+        }
+        
+        // [10,9,2,5,3,7,101,18]
+        // 10 -> pass, 9 -> pass since 9 < 10
+        // 2 ->pass, 2 < 10, 2 < 9
+        // 5 -> look 10, 9, 2       -> dp[2] + 1 -> 2, 5 > 2, 5 < 9, 5 < 10
+        // ...
+        // 7 -> look 10 9, 2, 5, 3, ->dp[3] + 1 -> 2 + 1 -> 3
+        for (int i = 0; i < nums.size(); i ++) {
+            for (int j = 0; j < i; j ++) {
+                if (nums[i] > nums[j]) {
+                    dp[i].first = max(dp[i].first, dp[j].first + 1);
+                }
+            }
+
+            // Here, we find the max LTS length, we then have another loop find out
+            // how many same max LTS it has when looping from element zero
+            int counter = 0;
+            for (int j = 0; j < i; j ++) {
+                if (nums[i] > nums[j] && dp[i].first == dp[j].first + 1) {
+                    counter = counter + dp[j].second;
+                }
+            }
+            
+            // Record
+            dp[i].second = counter == 0 ? 1 : counter;
+        }
+        
+        // Find the LTS
+        int result = 0;
+        for (int i = 0; i < dp.size(); i ++) {
+            result = max(result, dp[i].first);
+        }
+
+        // Find the final result
+        int count = 0;
+        for (int i = 0; i < dp.size(); i ++) {
+            if (dp[i].first == result) {
+                count = count + dp[i].second;
+            }
+        }
+        
+        return count;
+    }
+};
+```
+
 - [Largest Divisible Subset](https://leetcode.com/problems/largest-divisible-subset/)
 
 <p align="center">
@@ -2622,6 +2759,63 @@ public:
 ```
 
 - [Perfect Squares - Dynamic Programming - Leetcode 279](https://www.youtube.com/watch?v=HLZLwjzIVGo&ab_channel=NeetCode)
+
+- [Integer Break](https://leetcode.com/problems/integer-break/description/?envType=study-plan&id=algorithm-ii)
+
+<p align="center">
+  <img src="imgs/127.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int integerBreak(int n) {
+        int result = 0;
+
+        for (int i = 1; i < n ; i ++) {
+            int base = i;
+            int mod = n % i;
+            int power = n / i;
+
+            if (mod == 1 && power - 1 != 0) {
+                power = power - 1;
+                mod =  mod + base;
+            }
+
+            if (mod > 0)
+                result = max(static_cast<int>(pow(i, power) * mod), result);
+            else
+                result = max(static_cast<int>(pow(i, power)), result);
+        }
+
+        return result;
+    }
+};
+
+// DP
+
+/* DP
+ * 从n = 2开始递推，递推到n = 4的时候，4可以拆分成1和3或2和2
+ * 那么3要不要继续拆分呢？2要不要继续拆分呢？
+ * 不需要。因为我们已经把拆分2或3能得到的最大值分别计算好存在dp[2]和dp[3]了
+ * 所以我们只需要比较2和dp[2]、3和dp[3]谁更大就知道要不要继续拆分
+ * 所以对每个n，我们只需要考虑拆分成两个数a b的情况，然后看比较a和dp[a]
+ * 以及b和dp[b]谁大就用谁相乘，如果dp[a]>a，表示dp[a]继续拆分能得到比不拆分
+ * 更大的值，那么就拆分a，对于dp[b]和b也一样
+ */
+class Solution {
+public:
+    int integerBreak(int n) {
+        vector<int> dp(n + 1, 0);
+        for(int i = 2; i <= n; i++) {
+            for(int j = 1; j <= i / 2; j++) {
+                dp[i] = max(dp[i], max(j, dp[j]) * max(i - j, dp[i - j]));
+            }
+        }
+        return dp[n];
+    }
+};
+```
 
 From: https://zhuanlan.zhihu.com/p/91582909
 
@@ -2707,7 +2901,7 @@ From: https://mp.weixin.qq.com/s/waFh-_7Q3EiFdUfXawm4Ww <br/>
 </p>
 
 From: https://www.zhihu.com/question/30527705/answer/1663740519 <br/>
-From: https://zhuanlan.zhihu.com/p/72505589 <br/>>
+From: https://zhuanlan.zhihu.com/p/72505589 <br/>
 
 ## **LeetCode**
 From: https://github.com/youngyangyang04/leetcode-master
