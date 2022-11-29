@@ -341,6 +341,32 @@ public:
 
 > [Balanced Binary Tree](https://leetcode.com/problems/balanced-binary-tree/)
 
+<p align="center">
+  <img src="imgs/128.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    pair<bool, int> isBalancedTraversal(TreeNode* root, int currentDepth) {
+        if (root == nullptr)
+            return {true, currentDepth - 1};
+        
+        auto leftSubDepth = isBalancedTraversal(root->left, currentDepth + 1);
+        auto rightSubDepth = isBalancedTraversal(root->right, currentDepth + 1);
+    
+        if (abs(leftSubDepth.second - rightSubDepth.second) > 1 || !leftSubDepth.first || !rightSubDepth.first)
+            return {false, 0};
+        else
+            return {true, max(leftSubDepth.second, rightSubDepth.second)};
+    }
+
+    bool isBalanced(TreeNode* root) {
+        return isBalancedTraversal(root, 0).first;
+    }
+};
+```
+
 - Binary Search Tree
 
 <p align="center">
@@ -352,6 +378,10 @@ public:
 </p>
 
 > [Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/)
+
+<p align="center">
+  <img src="imgs/129.png" />
+</p>
 
 - **Inorder traverse to get sorted array is not enough!!!**
 
@@ -384,6 +414,11 @@ public:
 ```
 
 - [Sorted Array to Balanced BST](https://www.geeksforgeeks.org/sorted-array-to-balanced-bst/)
+
+<p align="center">
+  <img src="imgs/130.png" />
+</p>
+
 - [Convert a normal BST to Balanced BST](https://www.geeksforgeeks.org/convert-normal-bst-balanced-bst/)
 
 <p align="center">
@@ -729,6 +764,10 @@ public:
 > Better Partition
 
 ```c++
+// CPP program for implementation of QuickSelect
+#include <bits/stdc++.h>
+using namespace std;
+  
 // Standard partition process of QuickSort().
 // It considers the last element as pivot
 // and moves all smaller element to left of
@@ -737,9 +776,6 @@ int partition(int arr[], int l, int r)
 {
     int x = arr[r], i = l;
     for (int j = l; j <= r - 1; j++) {
-      // When smaller, i and j grows together,
-      // When larger j grows until find the first smaller element
-      // swap with i, i++
         if (arr[j] <= x) {
             swap(arr[i], arr[j]);
             i++;
@@ -747,6 +783,51 @@ int partition(int arr[], int l, int r)
     }
     swap(arr[i], arr[r]);
     return i;
+}
+  
+// This function returns k'th smallest 
+// element in arr[l..r] using QuickSort 
+// based method.  ASSUMPTION: ALL ELEMENTS
+// IN ARR[] ARE DISTINCT
+int kthSmallest(int arr[], int l, int r, int k)
+{
+    // If k is smaller than number of 
+    // elements in array
+    if (k > 0 && k <= r - l + 1) {
+  
+        // Partition the array around last 
+        // element and get position of pivot 
+        // element in sorted array
+        int index = partition(arr, l, r);
+  
+        // If position is same as k
+        if (index - l == k - 1)
+            return arr[index];
+  
+        // If position is more, recur 
+        // for left subarray
+        if (index - l > k - 1) 
+            return kthSmallest(arr, l, index - 1, k);
+  
+        // Else recur for right subarray
+        return kthSmallest(arr, index + 1, r, 
+                            k - index + l - 1);
+    }
+  
+    // If k is more than number of 
+    // elements in array
+    return INT_MAX;
+}
+  
+// Driver program to test above methods
+int main()
+{
+    int arr[] = { 10, 4, 5, 8, 6, 11, 26 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+    cout << "K-th smallest element is " 
+        << kthSmallest(arr, 0, n - 1, k);
+    return 0;
 }
 ```
 

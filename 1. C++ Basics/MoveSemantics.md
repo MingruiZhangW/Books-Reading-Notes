@@ -1,5 +1,13 @@
 # Move Semantics and Smart Pointers
 
+- RAII
+
+<p align="center">
+  <img src="ms_imgs/34.png" />
+</p>
+
+- Smart Pointers
+
 <p align="center">
   <img src="ms_imgs/1.png" />
 </p>
@@ -363,6 +371,15 @@ int main()
 </p>
 
 ```c++
+static_cast<T&&>(t);
+```
+
+<p align="center">
+  <img src="ms_imgs/33.png" />
+</p>
+
+
+```c++
 #include <iostream>
 #include <string>
 #include <utility> // for std::move
@@ -445,6 +462,37 @@ int main()
 <p align="center">
   <img src="ms_imgs/19.png" />
 </p>
+
+```c++
+unique_ptr<int> x {new int(10)};
+unique_ptr<int> y {x};
+
+cout << *y.get();
+
+main.cpp: In function ‘int main(int, char**)’:
+main.cpp:19:21: error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>::unique_ptr(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = int; _Dp = std::default_delete]’
+   19 | unique_ptr<int> y {x};
+      |                     ^
+In file included from /usr/include/c++/9/memory:80,
+                 from main.cpp:10:
+/usr/include/c++/9/bits/unique_ptr.h:414:7: note: declared here
+  414 |       unique_ptr(const unique_ptr&) = delete;
+      | 
+
+
+int test(unique_ptr<int> x) {
+    return 1;
+}
+
+int main(int argc, char ** argv){
+	unique_ptr<int> x {new int(10)};
+	cout << test(x);
+}
+
+main.cpp: In function ‘int main(int, char**)’:
+main.cpp:23:15: error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>::unique_ptr(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = int; _Dp = std::default_delete]’
+   23 | cout << test(x);
+```
 
 <p align="center">
   <img src="ms_imgs/20.png" />

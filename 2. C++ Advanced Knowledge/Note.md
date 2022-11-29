@@ -71,6 +71,10 @@ From: https://www.zhihu.com/question/441518636/answer/1701252133
 
 ## **Usage of Macro** - **Loop unrolling**
 
+- Unrolling a loop (usually) makes the code larger, because the body of the loop is repeated in the compiled executable. In an ideal situation, the compiler can optimize away code that is shared between iterations, but this isn't always possible.
+
+- This increase in code size can force other code out of the instruction cache (L1, L2, L3), causing reduced performance. If the body of the loop and the code it calls no longer fits into cache, performance will be severely reduced.
+
 > inline 无法代替宏的地方：
 1. 循环展开：
 ```
@@ -700,3 +704,28 @@ From: https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
 <p align="center">
   <img src="imgs/4.png" />
 </p>
+
+## What will happen when I call a member function on a NULL object pointer?
+
+```c++
+class A
+{
+public:
+    void fun()
+    {
+        std::cout << "fun" << std::endl;
+    }
+};
+
+A* a = NULL;
+a->fun();
+```
+
+<p align="center">
+  <img src="imgs/5.png" />
+</p>
+
+- **How class functions are implemented in C++**
+- This isn't a virtual function, therefor this can be a ***static call to a known address***.
+
+## Double CAS instruction，RCU (Read Copy Update)

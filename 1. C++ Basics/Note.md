@@ -482,15 +482,7 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
 </p>
 
 <p align="center">
-  <img src="imgs/87.png" />
-</p>
-
-<p align="center">
   <img src="imgs/88.png" />
-</p>
-
-<p align="center">
-  <img src="imgs/89.png" />
 </p>
 
 <p align="center">
@@ -567,7 +559,7 @@ For most variable types, this is fine. However, **for Boolean values, this is a 
 
 > ```const std::string&``` is low-level const (reference to a const object)
 
-> ```const int* const ptr``` left is hight-level const(cannot re-point to another obj), right is low-level const(point to a const obj) 
+> ```const int* const ptr``` left is hight-level const(point to a const obj), right is low-level const(const pointer) 
 
 <p align="center">
   <img src="imgs/105.png" />
