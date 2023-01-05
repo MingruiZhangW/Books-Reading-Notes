@@ -367,6 +367,99 @@ public:
 };
 ```
 
+> [Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/)
+
+<p align="center">
+  <img src="imgs/134.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/133.png" />
+</p>
+
+- Preorder has the root hidden for the subtree in inorder array
+
+```c++
+class Solution {
+public:
+    void buildTreeRecu(TreeNode* currentRoot,
+                       vector<int> leftSubTree,
+                       vector<int> rightSubTree,
+                       int preRootIndex,
+                       vector<int>& preorder) {
+        TreeNode* newLeftRoot = nullptr;
+        TreeNode* newRightRoot = nullptr;
+
+        // For the left subtree, preorder[preRootIndex] will always be the root,
+        // need to find out where in the leftsubtree array the root is,
+        // futher divide up the tree
+        if (leftSubTree.size() > 0) {
+            newLeftRoot = new TreeNode(preorder[preRootIndex]);
+
+            currentRoot->left = newLeftRoot;
+
+            int newLeftRootIndex = -1;
+            for (int i = 0; i < leftSubTree.size(); i ++) {
+                if (leftSubTree[i] == preorder[preRootIndex]) {
+                    newLeftRootIndex = i;
+                    break;
+                }
+            }
+
+            if (newLeftRootIndex >= 0)
+                buildTreeRecu(newLeftRoot, 
+                    std::vector<int>(leftSubTree.begin(), leftSubTree.begin() + newLeftRootIndex),
+                    std::vector<int>(leftSubTree.begin() + newLeftRootIndex + 1, leftSubTree.end()),
+                    preRootIndex + 1,
+                    preorder);
+        }
+
+        // For right subtree, preorder[preRootIndex + leftSubTree.size()] will always be the root
+        if (rightSubTree.size() > 0 && preRootIndex + leftSubTree.size() < preorder.size()) {
+            newRightRoot = new TreeNode(preorder[preRootIndex + leftSubTree.size()]);
+
+            currentRoot->right = newRightRoot;
+
+            int newRightRootIndex = -1;
+            for (int i = 0; i < rightSubTree.size(); i ++) {
+                if (rightSubTree[i] == preorder[preRootIndex + leftSubTree.size()]) {
+                    newRightRootIndex = i;
+                    break;
+                }
+            }
+
+            if (newRightRootIndex >= 0)
+                buildTreeRecu(newRightRoot, 
+                    std::vector<int>(rightSubTree.begin(), rightSubTree.begin() + newRightRootIndex),
+                    std::vector<int>(rightSubTree.begin() + newRightRootIndex + 1, rightSubTree.end()),
+                    preRootIndex + leftSubTree.size() + 1,
+                    preorder);
+        }
+    }
+
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        TreeNode* root = new TreeNode(preorder[0]);
+
+        int rootIndex = -1;
+        for (int i = 0; i < inorder.size(); i ++) {
+            if (inorder[i] == preorder[0]) {
+                rootIndex = i;
+                break;
+            }
+        }
+
+        if (rootIndex >= 0)
+            buildTreeRecu(root, 
+                        std::vector<int>(inorder.begin(), inorder.begin() + rootIndex),
+                        std::vector<int>(inorder.begin() + rootIndex + 1, inorder.end()),
+                        1,
+                        preorder);
+        
+        return root;
+    }
+};
+```
+
 - Binary Search Tree
 
 <p align="center">
@@ -476,6 +569,55 @@ def optbst(t):
     return resultList
 ```
 
+- [Unique Binary Search Trees II](https://leetcode.com/problems/unique-binary-search-trees-ii/description/)
+
+<p align="center">
+  <img src="imgs/131.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<TreeNode*> buildSubTreeDAC(int start, int end) {
+        // start > end, means no elements available for the subtree construction
+        // need to return size of one nullptr for base case to work (double for-loop)
+        if (start > end)
+            return {nullptr};
+
+        vector<TreeNode*> result;
+        // i here means the root element we select
+        // anything before i should be in left sub tree
+        // anything after i should be in right sub tree
+
+        // Divide and conquerer
+        for (int i = start; i <= end; ++ i) {
+            auto leftSubTrees = buildSubTreeDAC(start, i - 1);
+            auto rightSubTrees = buildSubTreeDAC(i + 1, end);
+
+            // Because on base case we return {nullptr}, this will exe once
+            for(int j = 0; j < leftSubTrees.size(); ++j) {
+                for(int k = 0; k < rightSubTrees.size(); ++k) {
+                    TreeNode* root = new TreeNode(i);
+                    // Base case here, left and right are all nullptrs
+                    root->left = leftSubTrees[j];
+                    root->right = rightSubTrees[k];
+
+                    result.push_back(root);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    vector<TreeNode*> generateTrees(int n) {
+        return buildSubTreeDAC(1, n);
+    }
+};
+```
+
+> [Sol](https://leetcode.com/problems/unique-binary-search-trees-ii/solutions/1849266/c-detailed-explanation-recursive-tree-with-comments/?orderBy=most_votes)
+
 ## Two Pointers
 
 <p align="center">
@@ -485,6 +627,8 @@ def optbst(t):
 <p align="center">
   <img src="imgs/27.png" />
 </p>
+
+> Note that the ```vector<int> result``` is important here, we cannnot do the operation in one array to achieve O(n)
 
 ```c++
 class Solution {
@@ -526,6 +670,8 @@ public:
 <p align="center">
   <img src="imgs/29.png" />
 </p>
+
+> ```kMod = k % nums.size()```
 
 ```c++
 class Solution {
@@ -942,6 +1088,58 @@ public:
         }
 
         return result;
+    }
+};
+```
+
+> [Sort Colors](https://leetcode.com/problems/sort-colors/description/)
+
+<p align="center">
+  <img src="imgs/135.png" />
+</p>
+
+- One pass with no extra space
+
+```c++
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int zeroP {0};
+        int twoP {static_cast<int>(nums.size()) - 1};
+        int currentP {0};
+
+        // zeroP and currentP need to be updated since
+        // zeroP means the first element non-zero
+        while (zeroP < nums.size() && nums[zeroP] == 0) {
+            ++ zeroP;
+            ++ currentP;
+        }
+
+        while(currentP <= twoP) {
+            // Swap to two pointer positions
+            if (nums[currentP] == 2) {
+                auto temp = nums[twoP];
+                nums[twoP] = 2;
+                nums[currentP] = temp;
+                -- twoP;
+                
+                // Update positions only when temp = 1
+                // or swaped value is zero and currentP == zeroP
+                if (temp == 1 || (currentP == zeroP && temp == 0))
+                    ++ currentP;
+            } else if (nums[currentP] == 0) {
+                auto temp = nums[zeroP];
+                nums[zeroP] = 0;
+                nums[currentP] = temp;
+                ++ zeroP;
+                
+                if (temp == 1 || (currentP == zeroP && temp == 0))
+                    ++ currentP;
+            } else {
+                // current value is one
+                ++ currentP;
+            }
+        }
     }
 };
 ```
@@ -2318,6 +2516,59 @@ public:
 
 - [Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/)
 
+- [Minimum Number of Arrows to Burst Balloons](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/description/)
+
+<p align="center">
+  <img src="imgs/136.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    /*
+    Compare	-	A Compare type providing a strict weak ordering. Note that the Compare parameter 
+                is defined such that it returns true if its first argument comes before its second 
+                argument in a weak ordering. But because the priority queue outputs largest elements 
+                first, the elements that "come before" are actually output last. That is, the front of 
+                the queue contains the "last" element according to the weak ordering imposed by Compare.
+    */
+    // Here we sort the array by -> small xend to large xend
+    struct cmp {
+        bool operator()(const vector<int>& A, 
+                        const vector<int>& B) {
+            return A[1] > B[1]; 
+        }
+    };
+
+    // We do not need to care about the left boundary
+    // For the right boundary, we firstly sort from small xend to large xend
+    
+    // A balloon can be merged with another balloon if the current xend of the balloon,
+    // is larger than then the xstart of another balloon
+
+    // If the xstart of another balloon is larger than the current xend of the balloon,
+    // we update the current maximum xend, and add new arrow number
+    int findMinArrowShots(vector<vector<int>>& points) {
+        priority_queue<vector<int>, vector<vector<int>>, cmp> pQ (points.begin(), points.end());
+        int result {1};
+        int right {pQ.top()[1]};
+
+        pQ.pop();
+
+        for (int i = 1; i < points.size(); ++ i) {
+            vector<int> currentItem = pQ.top();
+            if (currentItem[0] > right) {
+                right = currentItem[1];
+                ++ result;
+            }
+
+            pQ.pop();
+        }
+        return result;
+    }
+};
+```
+
 ## Sliding Window
 
 <p align="center">
@@ -2900,6 +3151,116 @@ public:
 
 From: https://zhuanlan.zhihu.com/p/91582909
 
+- [Unique Binary Search Trees](https://leetcode.com/problems/unique-binary-search-trees/description/)
+
+<p align="center">
+  <img src="imgs/132.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int numTrees(int n) {
+        vector<int> dp;
+        dp.resize(n + 1);
+
+        // We let dp[0] = 1 indicates that zero sub tree nodes give one
+        dp[0] = 1;
+
+        // dp[1] should be one as well,
+        for(int i = 1; i <= n; i ++) {
+            // k as number as root (- 1)
+            for (int k = 0; k < i; k ++) {
+                dp[i] = dp[i] + dp[k] * dp[i - k - 1] ;
+            }
+        }
+
+        return dp[n];
+    }
+};
+```
+
+> [Word Break](https://leetcode.com/problems/word-break/description/)
+
+```c++
+class Solution {
+public:
+    /*
+     * Recursion with memoization
+     */
+    
+    // Memo should be here since no need to go over again when
+    // rightPos sub problem is gone over
+    // bool recurFind(int rightPos,
+    //                string& s,
+    //                vector<int>& memo,
+    //                set<string>& wordDict) {
+    //     if (rightPos == s.size())
+    //         return true;
+        
+    //     if (memo[rightPos] != -1)
+    //         return memo[rightPos];
+
+    //     string currentWord;
+    //     for (int i = rightPos; i < s.size(); ++ i) {
+    //         currentWord = currentWord + s[i];
+
+    //         if (wordDict.find(currentWord) != wordDict.end()) {
+    //             if (recurFind(i + 1, s, memo, wordDict)) {
+    //                 memo[i] = true;
+    //                 return true;
+    //             }
+    //         }
+    //     }
+
+    //     memo[rightPos] = false;
+    //     return false;
+    // }
+
+    // bool wordBreak(string s, vector<string>& wordDict) {
+    //     set<string> uniqueDict;
+    //     vector<int> memo (s.size(), -1);
+    //     for (auto &item: wordDict)
+    //         uniqueDict.insert(item);
+        
+    //     return recurFind(0, s, memo, uniqueDict);
+    // }
+
+    /*
+     * DP
+     */
+    
+    // Backward search
+    // ----i--->
+    // --j-|---->
+    // sub str to compare is the str between i and j
+    // catsandog
+    // dp[0] represent null str -> initial state to be true
+    bool wordBreak(string s, vector<string>& wordDict) {
+        set<string> uniqueDict;
+        vector<bool> dp (s.size() + 1, false);
+        dp[0] = true;
+
+        for (auto &item: wordDict)
+            uniqueDict.insert(item);
+        // As i goes, the truthness is store in dp for every position
+        // When i reaches the end, if it finds a word between i and j that is\
+        // in dict, it also need to check whether before this position, whether
+        // it is true in dp so that we can say that the whole thing is correct
+        for (int i = 1; i <= s.size(); ++ i) {
+            for (int j = 0; j < i; ++ j) {
+                if (dp[j] && uniqueDict.find(s.substr(j, i - j)) != uniqueDict.end()) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[s.size()];
+    }
+};
+```
+
 ## **Ring Buffer**
 
 From: https://zhuanlan.zhihu.com/p/394231116
@@ -2998,3 +3359,12 @@ From: https://mp.weixin.qq.com/s/Cd4uRslnek8r_a6chjwnYQ
 ## **KMP**
 
 From: https://mp.weixin.qq.com/s/3gYbmAAFh08BQmT-9quItQ
+
+## Remove while looping
+
+```c++
+allPlayers.erase(std::remove_if(allPlayers.begin(), allPlayers.end(), [](const Player& player)
+{
+    return player.getpMoney() <= 0;
+}), allPlayers.end())
+```
