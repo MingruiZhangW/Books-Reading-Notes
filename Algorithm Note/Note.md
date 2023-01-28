@@ -1829,6 +1829,89 @@ public:
 };
 ```
 
+- [01 Matrix](https://leetcode.com/problems/01-matrix/description/)
+
+<p align="center">
+  <img src="imgs/148.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        vector<vector<int>> result(mat.size(), vector(mat[0].size(), numeric_limits<int>::max()));
+
+        queue<pair<int, int>> bfsQueue;
+
+        // We use bfs starting from zero to reach one so that
+        // we do not need to have a bfs for each "one"
+        // result map would be filled with zero and int max value
+
+        // Starting from zero, bfsQueue will only push only if its nearby items have a val
+        // larger than the currentVal + 1
+
+        // For example, currentVal = 0, if its nearby items hold all int_max, then,
+        // their value would be replaced by currentVal + 1, and their index are going to be push
+        // into the queue as the new "zeros"
+
+        // if currentVal = 2, it means it is coming from the "new zeros", we do the same iteration
+        // Finally, it will make sure that all values contain the min distance to zero
+        for (int i = 0; i < mat.size(); ++i) {
+            for (int j = 0; j < mat[i].size(); ++j) {
+                if (mat[i][j] == 0) {
+                    result[i][j] = 0;
+                    bfsQueue.push({i, j});
+                }
+            }
+        }
+
+        while(bfsQueue.size() > 0) {
+            auto currentZeroPair = bfsQueue.front();
+            bfsQueue.pop();
+
+            auto currentVal = result[currentZeroPair.first][currentZeroPair.second];
+            // Top
+            if (currentZeroPair.first - 1 >= 0) {
+                auto val = result[currentZeroPair.first - 1][currentZeroPair.second];
+                if (currentVal + 1 < val) {
+                    bfsQueue.push({currentZeroPair.first - 1, currentZeroPair.second});
+                    result[currentZeroPair.first - 1][currentZeroPair.second] = min(val, currentVal + 1);
+                }
+            }
+
+            // Bottom
+            if (currentZeroPair.first + 1 < result.size()) {
+                auto val = result[currentZeroPair.first + 1][currentZeroPair.second];
+                if (currentVal + 1 < val) {
+                    bfsQueue.push({currentZeroPair.first + 1, currentZeroPair.second});
+                    result[currentZeroPair.first + 1][currentZeroPair.second] = min(val, currentVal + 1);
+                }
+            }
+
+            // Left
+            if (currentZeroPair.second - 1 >= 0) {
+                auto val = result[currentZeroPair.first][currentZeroPair.second - 1];
+                if (currentVal + 1 < val) {
+                    bfsQueue.push({currentZeroPair.first, currentZeroPair.second - 1});
+                    result[currentZeroPair.first][currentZeroPair.second - 1] = min(val, currentVal + 1);
+                }
+            }
+
+            // Rght
+            if (currentZeroPair.second + 1 < result[0].size()) {
+                auto val = result[currentZeroPair.first][currentZeroPair.second + 1];
+                if (currentVal + 1 < val) {
+                    bfsQueue.push({currentZeroPair.first, currentZeroPair.second + 1});
+                    result[currentZeroPair.first][currentZeroPair.second + 1] = min(val, currentVal + 1);
+                }
+            }
+        }
+
+        return result;
+    }
+};
+```
+
 ## DFS (Depth First Search)
 
 <p align="center">
@@ -1838,6 +1921,52 @@ public:
 <p align="center">
   <img src="imgs/63.png" />
 </p>
+
+> [Minimum Time to Collect All Apples in a Tree](https://leetcode.com/problems/minimum-time-to-collect-all-apples-in-a-tree/description/)
+
+<p align="center">
+  <img src="imgs/147.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    void dfsRecu(unordered_set<int>& nodeInThePath,
+                 unordered_set<int> currentPath,
+                 int currentIndex,
+                 vector<bool>& hasApple,
+                 vector<vector<int>>& adj) {
+        if (hasApple[currentIndex]) {
+            for (auto& item: currentPath)
+                nodeInThePath.insert(item);
+        }
+        
+        for(int i = 0; i < adj[currentIndex].size(); ++i) {
+            if (currentPath.find(adj[currentIndex][i]) == nodeInThePath.end()) {
+                currentPath.insert(adj[currentIndex][i]);
+                dfsRecu(nodeInThePath, currentPath, adj[currentIndex][i], hasApple, adj);
+                currentPath.erase(adj[currentIndex][i]);
+            }
+        }
+    }
+
+    int minTime(int n, vector<vector<int>>& edges, vector<bool>& hasApple) {
+        unordered_set<int> nodeInThePath;
+        nodeInThePath.insert(0);
+
+        vector<vector<int>> adj(n);
+
+        for (auto& edge: edges) {
+            adj[edge[0]].push_back(edge[1]);
+            adj[edge[1]].push_back(edge[0]);
+        }
+
+        dfsRecu(nodeInThePath, {0}, 0, hasApple, adj);
+
+        return (nodeInThePath.size() - 1) * 2;
+    }
+};
+```
 
 - Combination
 
@@ -2304,6 +2433,145 @@ public:
 };
 ```
 
+## DFS + BFS
+
+> [All Nodes Distance K in Binary Tree](https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/)
+
+<p align="center">
+  <img src="imgs/150.png" />
+</p>
+
+- DFS to find adjList, BFS level order traversal
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void dfsAdjConstruct(TreeNode* root, unordered_map<int, vector<int>>& adjList){
+        if (!root)
+            return;
+
+        if (root->left) {
+            adjList[root->val].push_back(root->left->val);
+            adjList[root->left->val].push_back(root->val);
+            dfsAdjConstruct(root->left, adjList);
+        }
+
+        if (root->right) {
+            adjList[root->val].push_back(root->right->val);
+            adjList[root->right->val].push_back(root->val);
+            dfsAdjConstruct(root->right, adjList);
+        }
+    }
+
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        // Covert to adj list (dfs) and bfs on the target node
+        unordered_map<int, vector<int>> adjList;
+        vector<int> result;
+        
+        // Unique set to prevent adding duplicated into the queue
+        unordered_set<int> uniqueNodeSet;
+
+        dfsAdjConstruct(root, adjList);
+
+        queue<int> bfsQueue;
+        bfsQueue.push(target->val);
+        uniqueNodeSet.insert(target->val);
+
+        int distance{0};
+        while(bfsQueue.size() > 0 && distance < k) {
+            auto currentLevelSize = bfsQueue.size();
+            
+            for(int i = 0; i < currentLevelSize; ++ i) {
+                auto currentItem = bfsQueue.front();
+
+                bfsQueue.pop();
+
+                for(auto& node: adjList[currentItem]) {
+                    if (uniqueNodeSet.find(node) == uniqueNodeSet.end()) {
+                        bfsQueue.push(node);
+                        uniqueNodeSet.insert(node);
+                    }
+                }
+            }
+            
+            ++ distance;
+        }
+        
+        // Now the queue stops at kth level
+        // Extract the result
+        while(bfsQueue.size() > 0) {
+            result.push_back(bfsQueue.front());
+            bfsQueue.pop();
+        }
+        
+        return result;
+    }
+};
+```
+
+> [Number of Nodes in the Sub-Tree With the Same Label](https://leetcode.com/problems/number-of-nodes-in-the-sub-tree-with-the-same-label/description/)
+
+<p align="center">
+  <img src="imgs/149.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    // Cannot use string since too big, vector is quick enough
+
+    // We go through all the connected unvisited node for the currentNode,
+    // merge all of its char counting vectors and record in result
+    vector<int> dfs(vector<vector<int>>& adjList, 
+                                 unordered_set<int>& visitedNode,
+                                 int currentNode,
+                                 vector<int>& result,
+                                 string& labels){
+        
+        vector<int> countMap (26,0);
+        ++ countMap[static_cast<int>(labels[currentNode]) - 97];
+
+        visitedNode.insert(currentNode);
+        for (auto& node: adjList[currentNode]) {
+            if (visitedNode.find(node) == visitedNode.end()) {
+                visitedNode.insert(node);
+                auto countMapRe = dfs(adjList, visitedNode, node, result, labels);
+                for (int i = 0; i < countMapRe.size(); ++i)
+                    countMap[i] = countMap[i] + countMapRe[i];
+            }
+        }
+
+        result[currentNode] = countMap[static_cast<int>(labels[currentNode]) - 97];
+        
+        return countMap;
+    }
+
+    vector<int> countSubTrees(int n, vector<vector<int>>& edges, string labels) {
+        vector<int> result (n, 0);
+        vector<vector<int>> adjList(n, vector<int>(0));
+        unordered_set<int> visitedNode;
+
+        // Construct adj
+        for(auto& edge: edges) {
+            adjList[edge[0]].push_back(edge[1]);
+            adjList[edge[1]].push_back(edge[0]);
+        }           
+
+        dfs(adjList, visitedNode, 0, result, labels);
+        return result;
+    }
+};
+```
+
 ## Hash and Heap
 
 ### Hash
@@ -2426,6 +2694,75 @@ public:
 <p align="center">
   <img src="imgs/74.png" />
 </p>
+
+> [Copy List with Random Pointer](https://leetcode.com/problems/copy-list-with-random-pointer/)
+
+<p align="center">
+  <img src="imgs/165.png" />
+</p>
+
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        if (!head)
+            return head;
+        
+        Node* copyHead = nullptr;
+        Node* returnHead = nullptr;
+        map<Node*, Node*> nodeReltionMap;
+
+        while(head) {
+            if (!copyHead) {
+                copyHead = new Node(head->val);
+                returnHead = copyHead;
+                nodeReltionMap[head] = copyHead;
+            }
+
+            if (head->next) {
+                if (nodeReltionMap.find(head->next) == nodeReltionMap.end()) {
+                    Node* nextItem = new Node(head->next->val);
+                    copyHead->next = nextItem;
+                    nodeReltionMap[head->next] = copyHead->next;
+                } else {
+                    copyHead->next = nodeReltionMap[head->next];
+                }
+            }
+
+            if (head->random) {
+                if (nodeReltionMap.find(head->random) == nodeReltionMap.end()) {
+                    Node* randomItem = new Node(head->random->val);
+                    copyHead->random = randomItem;
+                    nodeReltionMap[head->random] = copyHead->random;
+                } else {
+                    copyHead->random = nodeReltionMap[head->random];
+                }
+            }
+
+            head = head->next;
+            copyHead = copyHead->next;
+        }
+
+        return returnHead;
+    }
+};
+```
 
 ### Heap
 
@@ -2769,6 +3106,329 @@ public:
     }
 };
 ```
+## Misc
+
+> [Meeting rooms](https://www.lintcode.com/problem/920/description)
+
+<p align="center">
+  <img src="imgs/155.png" />
+</p>
+
+```c++
+/**
+ * Definition of Interval:
+ * class Interval {
+ * public:
+ *     int start, end;
+ *     Interval(int start, int end) {
+ *         this->start = start;
+ *         this->end = end;
+ *     }
+ * }
+ */
+
+class Solution {
+public:
+    /**
+     * @param intervals: an array of meeting time intervals
+     * @return: if a person could attend all meetings
+     */
+    bool canAttendMeetings(vector<Interval> &intervals) {
+        // O(n ^ 2)
+        // for (int i = 0; i < intervals.size(); ++i) {
+        //     auto currentInterval = intervals[i];
+        //     for (int j = i + 1; j < intervals.size(); ++j) {
+        //         if (currentInterval.end <= intervals[j].start || currentInterval.start >= intervals[j].end)
+        //             continue;
+        //         else
+        //             return false;
+        //     }
+        // }
+
+        // O(nLogn)
+        // Sort the intervals start from small to large
+        // s----------e
+        //     s1--------e1
+        sort(intervals.begin(), intervals.end(), [](const Interval& A, const Interval& B) {
+            return A.start < B.start;
+        });
+
+        // We then find if s1 < e (i + 1 and i interval), if it is then return false
+        for(int i = 0; i < intervals.size(); ++i) {
+            if (i + 1 < intervals.size()) {
+                if (intervals[i + 1].start < intervals[i].end)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+};
+```
+
+> [Meeting rooms II](https://www.lintcode.com/problem/919/description)
+
+<p align="center">
+  <img src="imgs/156.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/157.png" />
+</p>
+
+```c++
+/**
+ * Definition of Interval:
+ * class Interval {
+ * public:
+ *     int start, end;
+ *     Interval(int start, int end) {
+ *         this->start = start;
+ *         this->end = end;
+ *     }
+ * }
+ */
+
+class Solution {
+public:
+    /**
+     * @param intervals: an array of meeting time intervals
+     * @return: the minimum number of conference rooms required
+     */
+    int minMeetingRooms(vector<Interval> &intervals) {
+        priority_queue<int, vector<int>, greater<int>> priorityQueueResult;
+
+        // Sort by start time, so that start time increases, and if equal, compare end time
+        sort(intervals.begin(), intervals.end(), [](const Interval& A, const Interval& B){
+            if (A.start == B.start)
+                return A.end < B.end;
+            return A.start < B.start;
+        });
+
+        // We push end time into the min heap so that the top would always be the min end time meeting
+        priorityQueueResult.push(intervals[0].end);
+
+        // We compare the current meeting with the min end time meeting in the queue
+        // if the current meeting start time is larger than the min end time
+        // this mean no extra room is needed, pop the min end meeting in the queue
+        for (int i = 1; i < intervals.size(); ++i) {
+            if (intervals[i].start >= priorityQueueResult.top())
+                priorityQueueResult.pop();
+            
+            // we always push the current meeting into the queue
+            // since if meetings share the room, we still need at least one room
+            priorityQueueResult.push(intervals[i].end);
+        }
+
+        // This work since we first arrange the start time (min) and compare the min end time
+        // when start time of the meeting is larger than the min end time, the time arrangement
+        // must be the tightest one
+
+        return priorityQueueResult.size();
+    }
+};
+```
+
+<p align="center">
+  <img src="imgs/158.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval> &intervals) {
+        // Check for the base case. If there are no intervals, return 0
+        if (intervals.size() == 0) {
+        return 0;
+        }
+
+        vector<int> start(intervals.size());
+        vector<int> end(intervals.size());
+
+        for (int i = 0; i < intervals.size(); i++) {
+        start[i] = intervals[i].start;
+        end[i] = intervals[i].end;
+        }
+
+        // Sort the intervals by end time
+        sort(end.begin(), end.end());
+
+        // Sort the intervals by start time
+        sort(start.begin(), start.end());
+
+        // The two pointers in the algorithm: e_ptr and s_ptr.
+        int startPointer = 0, endPointer = 0;
+
+        // Variables to keep track of maximum number of rooms used.
+        int usedRooms = 0;
+
+        // Iterate over intervals.
+        while (startPointer < intervals.size()) {
+
+        // If there is a meeting that has ended by the time the meeting at `start_pointer` starts
+        if (start[startPointer] >= end[endPointer]) {
+            usedRooms -= 1;
+            endPointer += 1;
+        }
+
+        // We do this irrespective of whether a room frees up or not.
+        // If a room got free, then this used_rooms += 1 wouldn't have any effect. used_rooms would
+        // remain the same in that case. If no room was free, then this would increase used_rooms
+        usedRooms += 1;
+        startPointer += 1;
+
+        }
+
+        return usedRooms;
+    }
+};
+```
+
+## Bit Manipulation
+
+> [Missing Number](https://leetcode.com/problems/missing-number/description/)
+
+<p align="center">
+  <img src="imgs/154.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/151.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/152.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/153.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    // XOR
+    int missingNumber(vector<int>& nums) {
+        int result = 0;
+
+        // Actual XOR result
+        for (int i = 1; i <= nums.size(); ++i)
+            result = result ^ i;
+        
+        // XOR result in vector cancel out, the left is the missing number
+        for (int i = 0; i < nums.size(); ++i)
+            result = result ^ nums[i];
+        
+        return result;
+    }
+
+    // Binary search 
+    int missingNumber(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+
+        int left = 0;
+        int right = nums.size() - 1;
+
+        while(left + 1 < right) {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] > mid)
+                right = mid;
+            else
+                left = mid;
+        }
+
+        if (nums[left] > left)
+            return nums[left] - 1;
+        if (nums[right] > right)
+            return nums[right] - 1;
+        return nums[right] + 1;
+    }
+};
+```
+
+- Bitwise XOR
+
+```c++
+    2 ^ 5 = 7
+    7 ^ 5 = 2
+    2 ^ 7 = 5
+```
+
+> [Power of Two](https://leetcode.com/problems/power-of-two/description/?envType=study-plan&id=algorithm-i)
+
+<p align="center">
+  <img src="imgs/159.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    bool isPowerOfTwo(int n) {
+        if (n <= 0)
+            return false;
+        // N is a power of two if there is only one '1' in the binary representation
+        // n - 1 will give us other '1's except for the '1' in the original N
+        // 4 -> 100
+        // 3 -> 011
+        // 3 & 4 is zero
+        return !(n & (n - 1));   
+    }
+};
+```
+
+> [Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/description/?envType=study-plan&id=algorithm-i)
+
+<p align="center">
+  <img src="imgs/160.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/161.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int hammingWeight(uint32_t n) {
+       int result {0};
+        while(n) {
+            n = n & (n - 1);
+            ++ result;
+        }
+
+        return result;
+    }
+};
+```
+
+> [Single Number](https://leetcode.com/problems/single-number/description/?envType=study-plan&id=algorithm-i)
+
+<p align="center">
+  <img src="imgs/163.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/162.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int result{0};
+        for (auto& item: nums) {
+            result = result ^ item;
+        }
+        return result;
+    }
+};
+```
+
+## 差分数组
+
+- [差分数组](https://zhuanlan.zhihu.com/p/301509170)
+- https://leetcode.com/problems/corporate-flight-bookings/
 
 ## **Ring Buffer**
 

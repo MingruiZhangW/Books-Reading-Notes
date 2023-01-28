@@ -81,6 +81,74 @@ public:
 };
 ```
 
+> [House Robber II](https://leetcode.com/problems/house-robber-ii/description/)
+
+```c++
+class Solution {
+public:
+    /*
+    Since you cannot rob both the first and last house, just create two separate vectors, one excluding the first house, and another excluding the last house. The best solution generated from these two vectors using the original House Robber DP algorithm is the optimal one.
+     */
+    int robOriginal(vector<int>& nums) {
+        int a = 0, b = 0, res = 0;
+        
+        for(int i = 0; i < nums.size(); ++i){
+            res = max(b + nums[i], a);
+            b = a;
+            a = res;
+        }
+        
+        return res;
+    }
+
+    int rob(vector<int>& nums) {
+        if(nums.empty()) return 0;
+        if(nums.size() == 1) return nums[0];
+        
+        vector<int> numsA(nums.begin() + 1, nums.end());
+        vector<int> numsB(nums.begin(), nums.end()-1);
+        
+        return max(robOriginal(numsA), robOriginal(numsB));
+    }
+};
+```
+
+> [Unique Paths](https://leetcode.com/problems/unique-paths/description/)
+
+<p align="center">
+  <img src="imgs/164.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, 0));
+        
+        // Initial condition
+        dp[0][0] = 1;
+        // Most important
+        // dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (i - 1 >= 0) {
+                    if (j - 1 >= 0) {
+                        dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                    } else
+                        dp[i][j] = dp[i - 1][j];
+                } else {
+                    if (j - 1 >= 0)
+                        dp[i][j] = dp[i][j - 1];
+                }
+            }
+        }
+
+        return dp[m - 1][n - 1];
+    }
+};
+```
+
 <p align="center">
   <img src="imgs/90.png" />
 </p>
@@ -233,32 +301,28 @@ public:
 class Solution {
 public:
     int maximalSquare(vector<vector<char>>& matrix) {
+        int result {0};
         vector<vector<int>> dp (matrix.size(), vector<int>(matrix[0].size(), 0));
-        
-        int maxL {0};
-        
-        for (int i = 0; i < matrix.size(); i ++) {
-            for (int j = 0; j < matrix[0].size(); j ++) {
+
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix[0].size(); ++ j) {
                 dp[i][j] = matrix[i][j] == '0' ? 0 : 1;
-                if (dp[i][j] == 1)
-                    maxL = 1;
+                result = max(result, dp[i][j]);
             }
         }
-        
-        for (int i = 1; i < matrix.size(); i ++) {
-            for (int j = 1; j < matrix[0].size(); j ++) {
-                if (dp[i][j] > 0 && dp[i - 1][j] > 0 && dp[i][j - 1] > 0 && dp[i - 1][j - 1] > 0) {
-                    if (dp[i - 1][j] == dp[i][j - 1] && dp[i][j - 1] == dp[i - 1][j - 1])
-                        dp[i][j] = dp[i - 1][j - 1] + 1;
-                    else
-                        dp[i][j] = min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]}) + 1;
-                    
-                    maxL = max(maxL, static_cast<int>(pow(dp[i][j], 2.0)));
+
+        // Bottom down
+        for (int i = 1; i < dp.size(); ++i) {
+            for (int j = 1; j < dp[0].size(); ++ j) {
+                // Check if up, up left, right is > 1
+                if (dp[i][j] >= 1 && dp[i - 1][j] >= 1 && dp[i - 1][j - 1] >= 1 && dp[i][j - 1] >= 1) {
+                    dp[i][j] = min({dp[i - 1][j], dp[i - 1][j - 1], dp[i][j - 1]}) + 1;
+                    result = max(result, dp[i][j] * dp[i][j]);
                 }
             }
         }
-        
-        return maxL;
+
+        return result;
     }
 };
 ```
