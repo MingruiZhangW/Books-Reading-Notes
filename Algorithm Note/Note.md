@@ -3425,6 +3425,50 @@ public:
 };
 ```
 
+## Stack
+
+> [Daily Temperatures](https://leetcode.com/problems/daily-temperatures/description/)
+
+<p align="center">
+  <img src="imgs/173.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+        // Find the largest next element
+        vector<int> result(temperatures.size(), 0);
+
+        // Record element value and index
+        vector<pair<int,int>> stackItems;
+        stackItems.push_back({temperatures[temperatures.size() - 1], temperatures.size() - 1});
+
+        for (int i = temperatures.size() - 2; i >= 0; --i) {
+            int popCount = 0;
+            for (int j = stackItems.size() - 1; j >= 0; --j) {
+                // Smaller then break. 
+                if (temperatures[i] < stackItems[j].first) {
+                    result[i] = stackItems[j].second - i;
+
+                    break;
+                } else
+                    ++ popCount;
+            }
+
+            // Pop items that are smaller than current temperature
+            if (popCount) {
+                for (int z = 0; z < popCount; ++z)
+                    stackItems.pop_back();
+            }
+            stackItems.push_back({temperatures[i], i});
+        }
+
+        return result;
+    }
+};
+```
+
 ## 差分数组
 
 - [差分数组](https://zhuanlan.zhihu.com/p/301509170)

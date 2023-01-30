@@ -1,6 +1,10 @@
 # Dynamic Programming
 
 <p align="center">
+  <img src="imgs/172.png" />
+</p>
+
+<p align="center">
   <img src="imgs/142.png" />
 </p>
 
@@ -119,6 +123,14 @@ public:
   <img src="imgs/164.png" />
 </p>
 
+<p align="center">
+  <img src="imgs/166.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/167.png" />
+</p>
+
 ```c++
 class Solution {
 public:
@@ -148,6 +160,53 @@ public:
     }
 };
 ```
+
+- 存在性动态规划 (存不存在solution)
+
+> [Jump Game](https://leetcode.com/problems/jump-game/)
+
+<p align="center">
+  <img src="imgs/168.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/169.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/170.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/171.png" />
+</p>
+
+```c++
+// Another way
+
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        vector<bool> dp(nums.size(), false);
+
+        dp[0] = true;
+        for(int i = 0; i < nums.size(); ++i) {
+            if (dp[i]) {
+                for (int j = i + 1; j <= i + nums[i]; ++j) {
+                    dp[j] = true;
+
+                    if (j == nums.size() - 1)
+                        return true;
+                }
+            }
+        }
+
+        return dp[nums.size() - 1];
+    }
+};
+```
+
+- Triangle
 
 <p align="center">
   <img src="imgs/90.png" />
