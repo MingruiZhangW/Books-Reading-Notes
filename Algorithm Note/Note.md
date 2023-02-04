@@ -1912,6 +1912,57 @@ public:
 };
 ```
 
+> [Network Delay Time](https://leetcode.com/problems/network-delay-time/description/)
+
+<p align="center">
+  <img src="imgs/176.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        // Both adj list and bfsQueue will store time
+        // Adj list store time to reach the neigbour node
+        // bfsQueue store the time spend to reach the node
+        vector<vector<pair<int, int>>> adjWithTimeList (n, vector<pair<int, int>>());
+        // This array is also important to store all min time to reach different node
+        // if there are uninitialized value, return -1
+        vector<int> timeArrival (n, numeric_limits<int>::max());
+        queue<pair<int, int>> bfsQueueWithCurrentNodeTime;
+
+        for(auto& node: times) {
+            adjWithTimeList[node[0] - 1].push_back({node[1] - 1, node[2]});
+        }
+        
+        bfsQueueWithCurrentNodeTime.push({k - 1, 0});
+        timeArrival[k - 1] = 0;
+
+        int result {numeric_limits<int>::min()};
+        while(bfsQueueWithCurrentNodeTime.size() > 0) {
+            auto currentPair = bfsQueueWithCurrentNodeTime.front();
+
+            bfsQueueWithCurrentNodeTime.pop();
+
+            // No need to check repeated node since "if" check for us
+            for (auto& adjNode: adjWithTimeList[currentPair.first]) {
+                if (timeArrival[adjNode.first] > currentPair.second + adjNode.second) {
+                    timeArrival[adjNode.first] = currentPair.second + adjNode.second;
+                    bfsQueueWithCurrentNodeTime.push({adjNode.first, timeArrival[adjNode.first]});
+                }
+            }
+        }
+
+        for (auto& time: timeArrival) {
+            if (time == numeric_limits<int>::max())
+                return -1;
+            result = max(result, time);
+        }
+        return result;
+    }
+};
+```
+
 ## DFS (Depth First Search)
 
 <p align="center">
@@ -2616,9 +2667,21 @@ public:
   <img src="imgs/78.png" />
 </p>
 
+> C++ ```std::list```
+
+- ```std::list``` is a container that supports constant time insertion and removal of elements from anywhere in the container. Fast random access is not supported. It is usually implemented as a ***doubly-linked list***.
+
+- ***Iterators*** are used to **point at the memory addresses** of STL containers.
+
+<p align="center">
+  <img src="imgs/177.png" />
+</p>
+
 <p align="center">
   <img src="imgs/81.png" />
 </p>
+
+- **The following solution works since ```list<int>::iterator``` remain functional when element around it changes**
 
 ```c++
 class LRUCache {
@@ -2683,6 +2746,113 @@ public:
 /**
  * Your LRUCache object will be instantiated and called as such:
  * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+```
+
+> [LFU Cache](https://leetcode.com/problems/lfu-cache/description/)
+
+<p align="center">
+  <img src="imgs/179.png" />
+</p>
+
+<p align="center">
+  <img src="imgs/178.png" />
+</p>
+
+```c++
+struct LFUCacheNode{
+    int value;
+    list<int>::iterator iter;
+    int frequency;
+};
+
+class LFUCache {
+public:
+    int m_capacity;
+    int m_size;
+    int m_lowestFre;
+    // Map storing key and its value, iter in the coorsponding frequency list, and frequency
+    unordered_map<int, LFUCacheNode> m_keyNodeMap;
+    // Map to store frequency and its list of keys in LRU order (front is LRU)
+    unordered_map<int, list<int>> m_frequencyKeyListMap;
+
+    LFUCache(int capacity) {
+        m_capacity = capacity;
+        m_size = 0;
+        m_lowestFre = 0;
+        m_keyNodeMap.clear();
+        m_frequencyKeyListMap.clear();
+    }
+    
+    int get(int key) {
+        if (m_keyNodeMap.find(key) != m_keyNodeMap.end()) {
+            int newFre = m_keyNodeMap[key].frequency + 1;
+            if (m_lowestFre == m_keyNodeMap[key].frequency && m_frequencyKeyListMap[m_lowestFre].size() == 1)
+                m_lowestFre = newFre;
+            
+            // Erase old frequecy storage for key
+            m_frequencyKeyListMap[m_keyNodeMap[key].frequency].erase(m_keyNodeMap[key].iter);
+            // Add the key to new frequency list
+            m_frequencyKeyListMap[newFre].push_back(key);
+
+            // Update info
+            m_keyNodeMap[key].frequency = newFre;
+            m_keyNodeMap[key].iter = --  m_frequencyKeyListMap[newFre].end();
+
+            return m_keyNodeMap[key].value;
+        }
+
+        return -1;
+    }
+    
+    void put(int key, int value) {
+        if (m_capacity == 0)
+            return;
+
+        if (m_keyNodeMap.find(key) == m_keyNodeMap.end()) {
+            if (m_size < m_capacity) {
+                m_frequencyKeyListMap[1].push_back(key);
+                m_keyNodeMap[key] = {value, -- m_frequencyKeyListMap[1].end(), 1};
+                ++ m_size;
+            } else {
+                // m_lowestFre is used here since we need to know where is the current
+                // LFU element's frequency
+
+                // Erase old frequecy storage for key
+                m_keyNodeMap.erase(m_frequencyKeyListMap[m_lowestFre].front());
+                m_frequencyKeyListMap[m_lowestFre].pop_front();
+
+                 // Add the key to new frequency list
+                m_frequencyKeyListMap[1].push_back(key);
+
+                // Add new info
+                m_keyNodeMap[key] = {value, -- m_frequencyKeyListMap[1].end(), 1};
+            }
+
+            m_lowestFre = 1;
+        } else {
+            int newFre = m_keyNodeMap[key].frequency + 1;
+            if (m_lowestFre == m_keyNodeMap[key].frequency && m_frequencyKeyListMap[m_lowestFre].size() == 1)
+                m_lowestFre = newFre;
+
+            // Erase old frequecy storage for key
+            m_frequencyKeyListMap[m_keyNodeMap[key].frequency].erase(m_keyNodeMap[key].iter);
+            // Add the key to new frequency list
+            m_frequencyKeyListMap[newFre].push_back(key);
+
+            // Update info
+            m_keyNodeMap[key].frequency = newFre;
+            m_keyNodeMap[key].iter =  -- m_frequencyKeyListMap[newFre].end();
+            m_keyNodeMap[key].value = value;
+        }
+    }
+};
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache* obj = new LFUCache(capacity);
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
@@ -3425,7 +3595,71 @@ public:
 };
 ```
 
+-[Bitwise AND of Numbers Range](https://leetcode.com/problems/bitwise-and-of-numbers-range/)
+
+<p align="center">
+  <img src="imgs/175.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    // x & y, all the non-consistant 1 will be eliminated
+    // the assumption is that when shifting right together
+    // all 1's between left and right binary form will be disgarded until 
+    // they are equal
+    int rangeBitwiseAnd(int left, int right) {
+        int count {0};
+        while (left != right) {
+            left = left >> 1;
+            right = right >> 1;
+
+            ++ count;
+        }
+
+        return right << count;
+    }
+};
+```
+
 ## Stack
+
+> [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/description/)
+
+<p align="center">
+  <img src="imgs/174.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> charStack;
+
+        for (int i = 0; i < s.size(); ++i) {
+            if (s[i] == '(' || s[i] == '{' || s[i] == '[') {
+                charStack.push(s[i]);
+                continue;
+            } else {
+                if (charStack.size() == 0)
+                    return false;
+
+                auto currentChar = charStack.top();
+                if (currentChar == '(' && s[i] == ')')
+                    charStack.pop();
+                else if (currentChar == '[' && s[i] == ']')
+                    charStack.pop();
+                else if (currentChar == '{' && s[i] == '}')
+                    charStack.pop();
+                else
+                    return false;
+            }
+        }
+
+        return charStack.size() == 0 ? true : false;
+    }
+};
+```
 
 > [Daily Temperatures](https://leetcode.com/problems/daily-temperatures/description/)
 
@@ -3468,6 +3702,8 @@ public:
     }
 };
 ```
+
+- https://leetcode.com/problems/daily-temperatures/solutions/844524/c-stack-vs-array-based-solutions-compared-and-explained-100-time-80-space/?orderBy=most_votes&languageTags=cpp
 
 ## 差分数组
 
