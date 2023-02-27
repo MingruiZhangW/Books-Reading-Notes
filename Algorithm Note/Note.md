@@ -1196,6 +1196,40 @@ public:
     }
 ```
 
+- https://www.youtube.com/watch?v=ZI2z5pq0TqA&ab_channel=NeetCode
+
+> [Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/)
+
+<p align="center">
+  <img src="imgs/181.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        if (prices.size() == 1)
+            return 0;
+
+        int minIndex{0};
+        int maxIndex{1};
+        int result {0};
+
+        while(maxIndex < prices.size()) {
+            if (prices[maxIndex] < prices[minIndex]) {
+                minIndex = maxIndex;
+            } else {
+                result = max(result, prices[maxIndex] - prices[minIndex]);
+            }
+
+            ++ maxIndex;
+        }
+
+        return result;
+    }
+};
+```
+
 ## **BFS - Breadth First Search - Queue**
 
 <p align="center">
@@ -2686,60 +2720,47 @@ public:
 ```c++
 class LRUCache {
 public:
-    // Capacity
-    int cap;
-    // Map -> has to store iterator to make list erase faster
-    // Map to store the value
-    map<int, pair<list<int>::iterator, int>> keyMapInVec;
-    // Linked list
-    // to maintain the order LRU
-    list<int> itemList;
-    
+    int m_capacity;
+    list<int> m_keyLRUList;
+    unordered_map<int, pair<int, list<int>::iterator>> m_keyValueIterMap;
+
     LRUCache(int capacity) {
-        cap = capacity;
-        // Ugly to solve leet code issue
-        ios_base::sync_with_stdio(false);
-        cin.tie(nullptr);
-        cout.tie(nullptr);
+        m_capacity = capacity;
+        m_keyLRUList.clear();
+        m_keyValueIterMap.clear();
     }
     
     int get(int key) {
-        // Find if in the map
-        auto mapIt = keyMapInVec.find(key);
-        if (mapIt == keyMapInVec.end())
-            return -1;
-        
-        // In the map, reorder LRU
-        itemList.erase(mapIt->second.first);
-        itemList.push_front(key);
-        mapIt->second.first = itemList.begin();
-        return mapIt->second.second;
+        if (m_keyValueIterMap.find(key) != m_keyValueIterMap.end()) {
+            m_keyLRUList.erase(m_keyValueIterMap[key].second);
+            m_keyLRUList.push_back(key);
+
+            m_keyValueIterMap[key].second = -- m_keyLRUList.end();
+
+            return m_keyValueIterMap[key].first;
+        }
+
+        return -1;
     }
     
     void put(int key, int value) {
-        auto mapIt = keyMapInVec.find(key);
-        // Not in the map
-        if (mapIt == keyMapInVec.end()) {
-            // Over Cap
-            if (keyMapInVec.size() == cap) {
-                // Remove the current LRU
-                auto lru = itemList.back();
-                keyMapInVec.erase(lru);
-                // Reorder the new key
-                itemList.pop_back();
-                itemList.push_front(key);
-            } else {
-                itemList.push_front(key);
+        if (m_capacity == 0)
+            return;
+
+        if (m_keyValueIterMap.find(key) == m_keyValueIterMap.end()) {
+            if (m_capacity == m_keyLRUList.size()) {
+                int lruKey = m_keyLRUList.front();
+                m_keyLRUList.pop_front();
+                m_keyValueIterMap.erase(lruKey);
             }
-        // Not in the map
+            m_keyLRUList.push_back(key);
+            m_keyValueIterMap[key] = {value, -- m_keyLRUList.end()};
         } else {
-            // Reorder
-            itemList.erase(mapIt->second.first);
-            itemList.push_front(key);
+            m_keyLRUList.erase(m_keyValueIterMap[key].second);
+            m_keyLRUList.push_back(key);
+
+            m_keyValueIterMap[key] = {value, -- m_keyLRUList.end()};
         }
-        
-        // Record the key
-        keyMapInVec[key] = {itemList.begin(), value};
     }
 };
 
@@ -3276,6 +3297,51 @@ public:
     }
 };
 ```
+
+> [Longest Repeating Character Replacement](https://leetcode.com/problems/longest-repeating-character-replacement/description/)
+
+<p align="center">
+  <img src="imgs/180.png" />
+</p>
+
+```c++
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        int left{0};
+        int right{0};
+        int result {1};
+        int maxFrequency {1};
+        unordered_map<char, int> frequencyMap;
+        frequencyMap[s[0]] = 1;
+
+        while(right < s.size()) {
+            // The window size is right + 1 - left, should not larger than maxFrequency + k
+            // k is the number of chars to convert to maxFrequency char
+            // need not to know which is the maxFrequency char
+            // !!!! we also need not to reduce maxFrequency since the maximum window size encounter before
+            // has it
+            if (right + 1 - left > maxFrequency + k) {
+                -- frequencyMap[s[left]];
+                ++ left;
+            } else {
+                result = max(result, right + 1 - left);
+
+                if (right == s.size() - 1)
+                    break;
+                ++ right;
+                ++ frequencyMap[s[right]];
+                maxFrequency = max(maxFrequency, frequencyMap[s[right]]);
+            }
+        }
+
+        return result;
+    }
+};
+```
+
+- https://leetcode.com/problems/longest-repeating-character-replacement/solutions/2805777/longest-repeating-character-replacement/?orderBy=most_votes
+
 ## Misc
 
 > [Meeting rooms](https://www.lintcode.com/problem/920/description)
@@ -3704,6 +3770,47 @@ public:
 ```
 
 - https://leetcode.com/problems/daily-temperatures/solutions/844524/c-stack-vs-array-based-solutions-compared-and-explained-100-time-80-space/?orderBy=most_votes&languageTags=cpp
+
+> [Max Consecutive Ones III](https://leetcode.com/problems/max-consecutive-ones-iii/description/)
+
+> [Min Stack](https://leetcode.com/problems/min-stack/description/)
+
+<p align="center">
+  <img src="imgs/182.png" />
+</p>
+
+```c++
+// Stack of pairs -> first is val, second is the minimum val visible to the current stack item 
+
+class MinStack {
+public:
+    stack<pair<int, int>> stackWithItemVisibleMin;
+    MinStack() {
+        stackWithItemVisibleMin = stack<pair<int, int>>();
+    }
+    
+    void push(int val) {
+        if (stackWithItemVisibleMin.empty() || val < stackWithItemVisibleMin.top().second) {
+            stackWithItemVisibleMin.push({val, val});
+        } else {
+            int min = stackWithItemVisibleMin.top().second;
+            stackWithItemVisibleMin.push({val, min});
+        };
+    }
+    
+    void pop() {
+        stackWithItemVisibleMin.pop();
+    }
+    
+    int top() {
+        return stackWithItemVisibleMin.top().first;
+    }
+    
+    int getMin() {
+        return stackWithItemVisibleMin.top().second;
+    }
+};
+```
 
 ## 差分数组
 
